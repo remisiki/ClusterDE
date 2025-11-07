@@ -48,7 +48,9 @@ Suggests: parallel,
           spatialLIBD
 LinkingTo: Rcpp,
            RcppArmadillo 
-Remotes: SONGDONGYUAN1994/scDesign3
+Remotes:
+    SONGDONGYUAN1994/scDesign3
+    gfkse/bettermc
 biocViews:
          Software,
          SingleCell,
