@@ -23,6 +23,8 @@
 #' @param BPPARAM A \code{MulticoreParam} object or NULL. When the parameter parallelization = 'mcmapply' or 'pbmcmapply',
 #' this parameter must be NULL. When the parameter parallelization = 'bpmapply',  this parameter must be one of the
 #' @param Approximation A logic value. For a high-latitude counting matrix, Approximation can increase the speed of data generation while ensuring accuracy. Note that it only takes effect if "fastVersion=TRUE, Approximation=TRUE". Default is FALSE.
+#' @param usePca A logic value. Whether to use PCA approximation. Default is FALSE.
+#' @param nPcs A numeric value. Number of PCs to use when usePca=T. Default is 200.
 #' \code{MulticoreParam} object offered by the package 'BiocParallel. The default value is NULL.
 #'
 #' @return The expression matrix of the synthetic null data.
@@ -44,7 +46,9 @@ constructNull <- function(
   ifSparse = FALSE,
   corrCut = 0.1,
   BPPARAM = NULL,
-  approximation = FALSE
+  approximation = FALSE,
+  usePca = F,
+  nPcs = 200
 ) {
   if (is.null(rownames(mat)) | is.null(colnames(mat))) {
     stop("The matrix must have both row names and col names!")
@@ -52,7 +56,105 @@ constructNull <- function(
   ## Check if we should use sparse matrix.
   isSparse <- methods::is(mat, "sparseMatrix")
 
-  if (!fastVersion) {
+
+  if (usePca) {
+    # Construct PCA
+    message("Contruct PCA")
+    normalized_mat <- t(logcp10k(as.matrix(count_mat)))
+    pca_res <- prcomp(
+      normalized_mat,
+      center = T,
+      scale. = T
+    )
+    pca_loading <- pca_res$rotation
+    rownames(pca_loading) <- rownames(count_mat)
+    pca_score <- pca_res$x
+    rownames(pca_score) <- colnames(count_mat)
+    ## get the bootstrapped residuals
+    reconstructed_mat <- pca_score[, 1:nPcs] %*% t(pca_loading[, 1:nPcs])
+    pca_intput <- sweep(normalized_mat, 2, pca_res$center, "-")
+    pca_intput <- sweep(pca_intput, 2, pca_res$scale, "/")
+    residuals <- pca_intput - reconstructed_mat
+
+    pca_sce <- SingleCellExperiment::SingleCellExperiment(list(counts = t(pca_score[, 1:nPcs])), colData = pbmc@meta.data)
+
+    set.seed(123)
+    message("Construct scDesign3 data")
+    data <- scDesign3::construct_data(
+      sce = pca_sce,
+      assay_use = "counts",
+      celltype = "seurat_clusters",
+      pseudotime = NULL,
+      spatial = NULL,
+      other_covariates = NULL,
+      corr_by = "ind"
+    )
+
+    message("Fit marginal")
+    marginal <- scDesign3::fit_marginal(
+      data = data,
+      predictor = "gene",
+      mu_formula = "1",
+      sigma_formula = "1",
+      family_use = "gaussian",
+      n_cores = nCores,
+      parallelization = "mapply"
+    )
+
+    message("Fit copula")
+    copula <- scDesign3::fit_copula(
+      sce = pca_sce,
+      assay_use = "counts",
+      input_data = data$dat,
+      marginal_list = marginal,
+      family_use = "gaussian",
+      n_cores = nCores,
+      parallelization = "mapply"
+    )
+
+    para_list <- scDesign3::extract_para(
+      sce = pca_sce,
+      assay_use = "counts",
+      marginal_list = marginal,
+      family_use = "gaussian",
+      new_covariate = data$newCovariate,
+      data = data$dat,
+      n_cores = nCores,
+      parallelization = "mapply"
+    )
+
+    message(paste0("Generate null data of ", nRep, " replicates"))
+    new_count_list <- suppressMessages(bettermc::mclapply(1:nRep, function(b) {
+      set.seed(b)
+      new_count <- scDesign3::simu_new(
+        sce = pca_sce,
+        assay_use = "counts",
+        mean_mat = para_list$mean_mat,
+        sigma_mat = para_list$sigma_mat,
+        zero_mat = para_list$zero_mat,
+        quantile_mat = NULL,
+        copula_list = copula$copula_list,
+        n_cores = 1,
+        family_use = "gaussian",
+        nonnegative = FALSE,
+        nonzerovar = FALSE,
+        input_data = data$dat,
+        new_covariate = data$newCovariate,
+        important_feature = copula$important_feature,
+        filtered_gene = data$filtered_gene
+      )
+
+      new_mat <- t(new_count) %*% t(pca_loading[, 1:nPcs])
+      residuals_bootstrap <- apply(residuals, 2, function(x) sample(x, length(x), replace = TRUE))
+      rownames(residuals_bootstrap) <- rownames(residuals)
+      new_mat <- new_mat + residuals_bootstrap
+      new_mat <- sweep(new_mat, 2, pca_res$scale, `*`)
+      new_mat <- sweep(new_mat, 2, pca_res$center, `+`)
+      # new_mat[new_mat < 0] <- 0
+      t(new_mat)
+    }, mc.cores = nCores, mc.retry = 5))
+    new_count_list
+  } else if (!fastVersion) {
     if (is.null(formula) & is.null(extraInfo)) {
       sce <- SingleCellExperiment::SingleCellExperiment(list(counts = mat))
       SummarizedExperiment::colData(sce)$fake_variable <- "1"
