@@ -50,6 +50,7 @@ LinkingTo: Rcpp,
            RcppArmadillo 
 Remotes:
     SONGDONGYUAN1994/scDesign3,
+    immunogenomics/presto,
     gfkse/bettermc
 biocViews:
          Software,
