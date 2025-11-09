@@ -30,45 +30,61 @@ callDE <- function(
   contrastScore = "diff",
   correct = FALSE,
   threshold = "BC",
-  ordering = TRUE
+  ordering = TRUE,
+  nCores = 1
 ) {
-  value <- null <- target <- cs <- NULL
-
-  if (is.null(names(targetScores)) | is.null(names(nullScores))) {
-    stop("Both scores should have gene names!")
+  nullScoresList <- if (!is.list(nullScores)) {
+    list(nullScores)
+  } else {
+    nullScores
   }
+  res_list <- bettermc::mclapply(nullScoresList, function(nullScores) {
+    record <- rep(0, length(targetScores))
+    names(record) <- names(targetScores)
+    value <- null <- target <- cs <- NULL
 
-  tbl_target <- dplyr::as_tibble(targetScores, rownames = "Gene")
-  tbl_target <- dplyr::rename(tbl_target, target = value)
-  tbl_null <- dplyr::as_tibble(nullScores, rownames = "Gene")
-  tbl_null <- dplyr::rename(tbl_null, null = value)
-
-  tbl_merge <- dplyr::left_join(tbl_target, tbl_null, by = "Gene")
-  if (nlogTrans) {
-    tbl_merge <- dplyr::mutate(tbl_merge, target = -log10(target), null = -log10(null))
-  }
-
-  if (contrastScore == 'diff') {
-    tbl_merge <- dplyr::mutate(tbl_merge, cs = target - null) ## Diff contrast scores
-
-    if (correct) {
-      if (PairedData::yuen.t.test(x = tbl_merge$target, y = tbl_merge$null, alternative = "greater", paired = TRUE, tr = 0.1)$p.value < 0.001) {
-        fit <- MASS::rlm(tbl_merge$target ~ tbl_merge$null, maxit = 100)
-        tbl_merge$cs <- fit$residuals
-      }
+    if (is.null(names(targetScores)) | is.null(names(nullScores))) {
+      stop("Both scores should have gene names!")
     }
-  } else if (contrastScore == 'max') {
-    tbl_merge <- dplyr::mutate(tbl_merge, cs = max(target, null) * sign(target - null))
-  } else stop("Contrast score must be constructed by 'diff' or 'max' method.")
+
+    tbl_target <- dplyr::as_tibble(targetScores, rownames = "Gene")
+    tbl_target <- dplyr::rename(tbl_target, target = value)
+    tbl_null <- dplyr::as_tibble(nullScores, rownames = "Gene")
+    tbl_null <- dplyr::rename(tbl_null, null = value)
+
+    tbl_merge <- dplyr::left_join(tbl_target, tbl_null, by = "Gene")
+    if (nlogTrans) {
+      tbl_merge <- dplyr::mutate(tbl_merge, target = -log10(target), null = -log10(null))
+    }
+
+    if (contrastScore == 'diff') {
+      tbl_merge <- dplyr::mutate(tbl_merge, cs = target - null) ## Diff contrast scores
+
+      if (correct) {
+        if (PairedData::yuen.t.test(x = tbl_merge$target, y = tbl_merge$null, alternative = "greater", paired = TRUE, tr = 0.1)$p.value < 0.001) {
+          fit <- MASS::rlm(tbl_merge$target ~ tbl_merge$null, maxit = 100)
+          tbl_merge$cs <- fit$residuals
+        }
+      }
+    } else if (contrastScore == 'max') {
+      tbl_merge <- dplyr::mutate(tbl_merge, cs = max(target, null) * sign(target - null))
+    } else stop("Contrast score must be constructed by 'diff' or 'max' method.")
 
 
-  tbl_merge <- dplyr::mutate(tbl_merge, q = cs2q(contrastScore = tbl_merge$cs, threshold = threshold))
-  if (ordering) {
-    tbl_merge <- dplyr::arrange(tbl_merge, dplyr::desc(cs))
-  }
+    tbl_merge <- dplyr::mutate(tbl_merge, q = cs2q(contrastScore = tbl_merge$cs, threshold = threshold))
+    if (ordering) {
+      tbl_merge <- dplyr::arrange(tbl_merge, dplyr::desc(cs))
+    }
 
-  DEgenes <- as.vector(dplyr::filter(tbl_merge, q <= FDR)$Gene)
-  return(list(targetFDR = FDR, DEgenes = DEgenes, summaryTable = tbl_merge))
+    DEgenes <- as.vector(dplyr::filter(tbl_merge, q <= FDR)$Gene)
+    record[DEgenes] <- 1
+    data.frame(
+      record = record,
+      cs = tbl_merge$cs
+    )
+  }, mc.cores = nCores, mc.retry = 5)
+  res <- Reduce("+", res_list)
+  res / length(res_list)
 }
 
 cs2q <- function(contrastScore, nnull = 1, threshold = "BC") {
