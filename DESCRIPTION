@@ -49,7 +49,7 @@ Suggests: parallel,
 LinkingTo: Rcpp,
            RcppArmadillo 
 Remotes:
-    SONGDONGYUAN1994/scDesign3
+    SONGDONGYUAN1994/scDesign3,
     gfkse/bettermc
 biocViews:
          Software,
