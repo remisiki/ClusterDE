@@ -57,7 +57,7 @@ constructNull <- function(
   isSparse <- methods::is(mat, "sparseMatrix")
 
 
-  if (usePca) {
+  synthetic_null_list <- if (usePca) {
     # Construct PCA
     message("Contruct PCA")
     normalized_mat <- t(logcp10k(as.matrix(count_mat)))
@@ -179,8 +179,7 @@ constructNull <- function(
         fastmvn = FALSE,
         n_rep = nRep
       )
-      newMat <- newData$new_count
-      newMat_list <- newMat
+      newData$new_count
     } else {
       sce <- SingleCellExperiment::SingleCellExperiment(list(counts = mat))
       SummarizedExperiment::colData(sce) <- DataFrame(extraInfo)
@@ -205,8 +204,7 @@ constructNull <- function(
         fastmvn = FALSE,
         n_rep = nRep
       )
-      newMat <- newData$new_count
-      newMat_list <- newMat
+      newData$new_count
     }
   } else {
     tol <- 1e-5
@@ -456,8 +454,6 @@ constructNull <- function(
       }
       ## Start sampling
       if (nRep == 1) {
-        newMat_list <- list()
-
         if (!approximation) {
           new_mvn <- mvnfast::rmvn(
             n_cell,
@@ -552,10 +548,10 @@ constructNull <- function(
         if (isSparse) {
           newMat <- Matrix::Matrix(newMat, sparse = TRUE)
         }
-        newMat_list[[1]] <- newMat
+        newMat
 
       } else {
-        newMat_list <- parallel::mclapply(seq_len(nRep), function(x) {
+        parallel::mclapply(seq_len(nRep), function(x) {
           if (!approximation) {
             new_mvn <- mvnfast::rmvn(
               n_cell,
@@ -656,7 +652,7 @@ constructNull <- function(
 
     } else {
       message("No correlation structure. All features are independent.")
-      newMat_list <- lapply(seq_len(nRep), function(x) {
+      lapply(seq_len(nRep), function(x) {
         newMat <- matrix(0, nrow = n_gene, ncol = n_cell)
         rownames(newMat) <- gene_names
         colnames(newMat) <- paste0("Cell", seq_len(n_cell))
@@ -699,9 +695,9 @@ constructNull <- function(
     }
   } ## End for fastVersion
 
-  if (length(newMat_list) == 1) {
-    return(newMat_list[[1]])
+  if (length(synthetic_null_list) == 1) {
+    synthetic_null_list[[1]]
   } else {
-    return(newMat_list)
+    synthetic_null_list
   }
 }
