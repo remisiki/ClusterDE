@@ -56,6 +56,9 @@ constructNull <- function(
   ## Check if we should use sparse matrix.
   isSparse <- methods::is(mat, "sparseMatrix")
 
+  if (nRep < nCores) {
+    nCores <- nRep
+  }
 
   synthetic_null_list <- if (usePca) {
     # Construct PCA

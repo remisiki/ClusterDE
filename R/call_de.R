@@ -38,6 +38,10 @@ callDE <- function(
   } else {
     nullScores
   }
+  nRep <- length(nullScoresList)
+  if (nRep < nCores) {
+    nCores <- nRep
+  }
   res_list <- bettermc::mclapply(nullScoresList, function(nullScores) {
     record <- rep(0, length(targetScores))
     names(record) <- names(targetScores)

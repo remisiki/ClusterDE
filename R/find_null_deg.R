@@ -6,7 +6,7 @@
 #' @param normalize Logical; if \code{TRUE} (default), apply Seurat's NormalizeData to each dataset. If \code{FALSE}, sets assay data directly. Set to false if null data is generated using PCA approximation. It is recommended to provide hvg if normalize is false.
 #' @param hvg A list of feaures; will be applied if normalization is set to false.
 #' @param seed Numeric; random seed for clustering reproducibility (default: 123).
-#' @param nCores An integer. The number of cores to use for Parallel processing.
+#' @param nCores An integer. The number of cores to use for parallel processing.
 #'
 #' @return A vector (if single input) or list (if multiple) of named p-values for each gene, corresponding to the null DEGs found by Seurat.
 #'
@@ -14,6 +14,10 @@
 findNullDeg <- function(synthetic_null, normalize = T, hvg = NULL, seed = 123, nCores = 1) {
   if (!is.list(synthetic_null)) {
     synthetic_null <- list(synthetic_null)
+  }
+  nRep <- length(synthetic_null)
+  if (nRep < nCores) {
+    nCores <- nRep
   }
   null_pval_list <- bettermc::mclapply(synthetic_null, function(count_mat) {
     set.seed(seed)
