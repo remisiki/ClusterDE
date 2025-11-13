@@ -12,7 +12,8 @@ callDE(
   contrastScore = "diff",
   correct = FALSE,
   threshold = "BC",
-  ordering = TRUE
+  ordering = TRUE,
+  nCores = 1
 )
 }
 \arguments{

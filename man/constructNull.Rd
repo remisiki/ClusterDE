@@ -16,7 +16,9 @@ constructNull(
   ifSparse = FALSE,
   corrCut = 0.1,
   BPPARAM = NULL,
-  approximation = FALSE
+  approximation = FALSE,
+  usePca = F,
+  nPcs = 200
 )
 }
 \arguments{
@@ -49,8 +51,12 @@ Must be one of 'mcmapply', 'bpmapply', or 'pbmcmapply', which corresponds to the
 \item{BPPARAM}{A \code{MulticoreParam} object or NULL. When the parameter parallelization = 'mcmapply' or 'pbmcmapply',
 this parameter must be NULL. When the parameter parallelization = 'bpmapply',  this parameter must be one of the}
 
-\item{Approximation}{A logic value. For a high-latitude counting matrix, Approximation can increase the speed of data generation while ensuring accuracy. Note that it only takes effect if "fastVersion=TRUE, Approximation=TRUE". Default is FALSE.
+\item{usePca}{A logic value. Whether to use PCA approximation. Default is FALSE.}
+
+\item{nPcs}{A numeric value. Number of PCs to use when usePca=T. Default is 200.
 \code{MulticoreParam} object offered by the package 'BiocParallel. The default value is NULL.}
+
+\item{Approximation}{A logic value. For a high-latitude counting matrix, Approximation can increase the speed of data generation while ensuring accuracy. Note that it only takes effect if "fastVersion=TRUE, Approximation=TRUE". Default is FALSE.}
 }
 \value{
 The expression matrix of the synthetic null data.
