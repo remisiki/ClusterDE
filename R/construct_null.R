@@ -35,7 +35,7 @@
 #' @importFrom gamlss.dist dZIP pZIP qZIP rZIP ZIP
 #' @export constructNull
 constructNull <- function(
-  mat,
+  obj,
   family = "nb",
   formula = NULL,
   extraInfo = NULL,
@@ -50,9 +50,7 @@ constructNull <- function(
   usePca = F,
   nPcs = 200
 ) {
-  if (is.null(rownames(mat)) | is.null(colnames(mat))) {
-    stop("The matrix must have both row names and col names!")
-  }
+  mat <- Seurat::GetAssayData(obj, layer = "counts")
   ## Check if we should use sparse matrix.
   isSparse <- methods::is(mat, "sparseMatrix")
 
@@ -63,23 +61,23 @@ constructNull <- function(
   synthetic_null_list <- if (usePca) {
     # Construct PCA
     message("Contruct PCA")
-    normalized_mat <- t(logcp10k(as.matrix(count_mat)))
+    normalized_mat <- t(logcp10k(as.matrix(mat)))
     pca_res <- prcomp(
       normalized_mat,
       center = T,
       scale. = T
     )
     pca_loading <- pca_res$rotation
-    rownames(pca_loading) <- rownames(count_mat)
+    rownames(pca_loading) <- rownames(mat)
     pca_score <- pca_res$x
-    rownames(pca_score) <- colnames(count_mat)
+    rownames(pca_score) <- colnames(mat)
     ## get the bootstrapped residuals
     reconstructed_mat <- pca_score[, 1:nPcs] %*% t(pca_loading[, 1:nPcs])
     pca_intput <- sweep(normalized_mat, 2, pca_res$center, "-")
     pca_intput <- sweep(pca_intput, 2, pca_res$scale, "/")
     residuals <- pca_intput - reconstructed_mat
 
-    pca_sce <- SingleCellExperiment::SingleCellExperiment(list(counts = t(pca_score[, 1:nPcs])), colData = pbmc@meta.data)
+    pca_sce <- SingleCellExperiment::SingleCellExperiment(list(counts = t(pca_score[, 1:nPcs])), colData = obj@meta.data)
 
     set.seed(123)
     message("Construct scDesign3 data")
@@ -676,7 +674,7 @@ constructNull <- function(
             stats::rpois(n = n_cell, lambda = para[x])
           } else if (family == "zip") {
             if (is.na(para[x, 2])) {
-              tats::rpois(n = n_cell, lambda = para[x, 1])
+              stats::rpois(n = n_cell, lambda = para[x, 1])
             } else {
               rZIP(n = n_cell,
                    sigma = para[x, 2],
