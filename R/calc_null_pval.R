@@ -1,4 +1,4 @@
-#' Find Differentially Expressed Genes (DEGs) in Synthetic Null Data
+#' Calculate pval for each gene in synthetic null data
 #'
 #' Runs a Seurat-based null differential expression analysis for provided synthetic null datasets.
 #'
@@ -11,7 +11,7 @@
 #' @return A vector (if single input) or list (if multiple) of named p-values for each gene, corresponding to the null DEGs found by Seurat.
 #'
 #' @export
-findNullDeg <- function(synthetic_null, normalize = T, hvg = NULL, seed = 123, nCores = 1) {
+calcNullPval <- function(synthetic_null, normalize = T, hvg = NULL, seed = 123, nCores = 1) {
   if (!is.list(synthetic_null)) {
     synthetic_null <- list(synthetic_null)
   }

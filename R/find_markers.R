@@ -32,11 +32,11 @@ findMarkers <- function(
   names(original_pval) <- rownames(original_markers)
   if (flavour == "classic") {
     null_data <- constructNull(obj, nCores = nCores, nRep = nRep, fastVersion = T)
-    null_pval <- findNullDeg(null_data)
+    null_pval <- calcNullPval(null_data)
     callDE(original_pval, null_pval)
   } else if (flavour == "pca") {
     null_data <- constructNull(obj, usePca = T, nCores = nCores, nRep = nRep)
-    null_pval <- findNullDeg(null_data, normalize = F, hvg = Seurat::VariableFeatures(obj), nCores = nCores)
+    null_pval <- calcNullPval(null_data, normalize = F, hvg = Seurat::VariableFeatures(obj), nCores = nCores)
     callDE(original_pval, null_pval, nCores = nCores)
   }
 }
