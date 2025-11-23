@@ -76,19 +76,29 @@ callDE <- function(
 
 
     tbl_merge <- dplyr::mutate(tbl_merge, q = cs2q(contrastScore = tbl_merge$cs, threshold = threshold))
-    if (ordering) {
-      tbl_merge <- dplyr::arrange(tbl_merge, dplyr::desc(cs))
-    }
+    # Rank the genes in the same order as target scores
+    tbl_merge <- tbl_merge[match(names(targetScores), tbl_merge$Gene), , drop = F]
 
     DEgenes <- as.vector(dplyr::filter(tbl_merge, q <= FDR)$Gene)
     record[DEgenes] <- 1
     data.frame(
+      gene = tbl_merge$Gene,
       record = record,
       cs = tbl_merge$cs
     )
   }, mc.cores = nCores, mc.retry = 5)
-  res <- Reduce("+", res_list)
-  res / length(res_list)
+  res <- dplyr::bind_rows(res_list)
+  res <- dplyr::group_by(res, gene)
+  res <- dplyr::summarise(
+    res,
+    cs = mean(cs, na.rm = T),
+    record = mean(record, na.rm = T),
+    .groups = "drop"
+  )
+  if (ordering) {
+    res <- res[order(res$cs, decreasing = T),]
+  }
+  res
 }
 
 cs2q <- function(contrastScore, nnull = 1, threshold = "BC") {
