@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-tools::R_user_dir("ClusterDE", which="cache")
+tools::R_user_dir("ClusterDE", which = "cache")
 ```
 
 ```{r setup, message=FALSE, warning=FALSE, results='hide'}
@@ -40,7 +40,7 @@ library(patchwork)
 library(Matrix)
 ```
 
-## Download data
+# Download data
 The PBMC datasets are originally from `SeuratData`. We use one of them (10x Chromium (v3) from PBMC1 replicate). We filtered out some lowly epxressed genes to save computational time here.
 ```{r}
 # InstallData("pbmcsca")
@@ -52,7 +52,7 @@ The PBMC datasets are originally from `SeuratData`. We use one of them (10x Chro
 pbmc <- readRDS(url("https://figshare.com/ndownloader/files/41486283"))
 ```
 
-## Run the regular Seurat pipeline
+# Run the regular Seurat pipeline
 
 We perform the default Seurat clustering. Note that in real data analysis, the cell type label is usually unknown.
 
@@ -67,7 +67,9 @@ pbmc <- RunPCA(object = pbmc)
 pbmc <- FindNeighbors(object = pbmc)
 pbmc <- FindClusters(object = pbmc, resolution = 0.3)
 pbmc <- RunUMAP(object = pbmc, dims = 1:10)
-p1 <- DimPlot(object = pbmc, reduction = "umap", label = TRUE) + ggtitle("Clustering result") + NoLegend()
+p1 <- DimPlot(object = pbmc, reduction = "umap", label = TRUE) +
+  ggtitle("Clustering result") +
+  NoLegend()
 p2 <- DimPlot(object = pbmc, reduction = "umap", group.by = "CellType", label = TRUE) + NoLegend()
 p1 + p2
 ```
@@ -81,73 +83,33 @@ PlotClusterTree(pbmc)
 We perform the DE test between cluster 2 and 8. We subset the cluster 2 and 8 (`pbmc_sub`).
 ```{r}
 pbmc_sub <- subset(x = pbmc, idents = c(2, 8))
-original_markers <- FindMarkers(pbmc_sub, 
-                                ident.1 = 2, 
-                                ident.2 = 8, 
-                                min.pct = 0, 
-                                logfc.threshold = 0)
+original_markers <- FindMarkers(
+  pbmc_sub,
+  ident.1 = 2,
+  ident.2 = 8,
+  min.pct = 0,
+  logfc.threshold = 0
+)
 ```
-**Note**: since we need the same number of genes being tested in real data and null data, we manually remove the default filtering in Seurat, which will exclude some genes from being test. We believe that this fitering should be performed after you test every gene.
+**Note**: since we need the same number of genes being tested in real data and null data, we manually remove the default filtering in Seurat, which will exclude some genes from being tested. We believe that this filtering should be performed after you test every gene.
 
-## Generate synthetic null data
+# Find DEGs using ClusterDE
 
-We first generate the synthetic null data based on the target data (real subset data, `pbmc_sub`, which contains the two clusters you are interested in). You can increase the number of cores (CPUs) to speed it up.
+We can use `findMarkers()` to perform null-calibrated post-clustering differential expression. The result table is sorted by contrast scores.
 ```{r}
-count_mat <- GetAssayData(object = pbmc_sub, slot = "counts")
-set.seed(1234)
-system.time(synthetic_null <- ClusterDE::constructNull(count_mat, nCores = 2, fastVersion = TRUE))
-```
-
-We perform the same pipeline as we did for target data. Please note we need two clusters here, too. This is straightforward for clustering method with predefined cluster numbers, e.g., K-means. For louvain clustering used in Seurat you may manually adjust the resolution parameter so that we still get two clusters.
-```{r}
-pbmc_null <- CreateSeuratObject(counts = synthetic_null)
-
-set.seed(123)
-pbmc_null <- NormalizeData(object = pbmc_null)
-pbmc_null <- FindVariableFeatures(object = pbmc_null)
-pbmc_null <- ScaleData(object = pbmc_null)
-pbmc_null <- RunPCA(object = pbmc_null)
-pbmc_null <- FindNeighbors(object = pbmc_null)
-pbmc_null <- FindClusters(object = pbmc_null, resolution = 0.3)
-pbmc_null <- RunUMAP(object = pbmc_null, dims = 1:10)
-DimPlot(object = pbmc_null, reduction = "umap")
-```
-
-We perform the DE test on synthetic null data.
-```{r}
-null_markers <- FindMarkers(pbmc_null, 
-                            ident.1 = 0, 
-                            ident.2 = 1, 
-                            min.pct = 0, 
-                            logfc.threshold = 0)
-```
-
-We extract the p-values from both original data and synthetic null data, then use `ClusterDE` to "compare" them.
-```{r}
-original_pval <- original_markers$p_val
-names(original_pval) <- rownames(original_markers)
-
-null_pval <- null_markers$p_val
-names(null_pval) <- rownames(null_markers)
-
-res <- ClusterDE::callDE(original_pval, null_pval, nlogTrans = TRUE, FDR = 0.05)
-```
-
-You can check the summary table. The genes are ranked by "contrast score (cs)".
-```{r}
-head(res$summaryTable)
+res <- ClusterDE::findMarkers(pbmc_sub, ident.1 = 2, ident.2 = 8)
 ```
 
 To compare the result from the naive Seurat pipeline and ClusterDE, we first visualize the top 6 DE genes from Seurat. Genes *LST1* and *RPS19* are both highly expressed in two clusters. In addition, *RPS19* is reported as a stable housekeeping genes in several studies. Note that it does not mean the expression levels of *LST1* and *RPS19* are the same between the two cell types. It means that they are not good cell type markers. Philosophically speaking, it means that **conditional on the two clusters are obtained by clustering algorithm, LST1 and RPS19 are less likely to be the cell type markers between the two cell types**.
 ```{r, fig.width=10, fig.height=6}
-FeaturePlot(pbmc[ , pbmc$seurat_clusters %in% c(2, 8)], features = c(rownames(original_markers)[1:6]), ncol = 3)
+FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = c(rownames(original_markers)[1:6]), ncol = 3)
 ```
 In contrast, the genes from ClusterDE do not have *LST1* and *RPS19* anymore.
 ```{r, fig.width=10, fig.height=6}
-FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = c(res$summaryTable$Gene[1:6]), ncol = 3)
+FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = c(res$gene[1:6]), ncol = 3)
 ```
 
-## Session information
+# Session information
 ```{r}
 sessionInfo()
 ```

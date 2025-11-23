@@ -26,7 +26,6 @@ To install the development version from GitHub, please run:
 ``` r
 if (!require("devtools", quietly = TRUE))
     install.packages("devtools")
-devtools::install_github("SONGDONGYUAN1994/scDesign3")
 devtools::install_github("SONGDONGYUAN1994/ClusterDE")
 ```
 
@@ -35,6 +34,34 @@ Please note that ClusterDE is actually a wrapper of **scDesign3**. Therefore, yo
 [Song, D., Wang, Q., Yan, G. et al. scDesign3 generates realistic in silico data for multimodal single-cell and spatial omics. <em>Nat Biotechnol</em> (2023).](https://www.nature.com/articles/s41587-023-01772-1)
 
 ## Quick Start<a name="quick-start"></a>
+
+A basic way to identify differentially expressed genes (DEGs) between two clusters is to use `ClusterDE::findMarkers()` on a Seurat object that already contains the count matrix and clustering results.
+
+```r
+# obj is a preprocessed Seurat object with clustering completed
+markers <- ClusterDE::findMarkers(obj, ident.1 = 0, ident.2 = 1)
+```
+
+This generates a list of genes ranked by contrast score (cs), where higher scores indicate stronger differential expression.
+
+```r
+head(markers)
+# # A tibble: 6 × 3
+#   gene        cs record
+#   <chr>    <dbl>  <dbl>
+# 1 CDKN1C    39.9      1
+# 2 CD79B     38.6      1
+# 3 FCGR3A    33.8      1
+# 4 CKB       32.3      1
+# 5 SIGLEC10  24.4      1
+# 6 MTSS1     23.8      1
+```
+
+- gene: gene symbol
+- cs: contrast score
+- record: indicator of reproducibility across null replicates
+
+# Other Usages
 
 The following code is a quick example of how to generate the synthetic null data. The input data should be a gene by cell matrix containing the two clusters you want to compare. If your input matrix is count data (especially UMI counts), `nb` (Negative Binomial) is usually the appropriate choice. The synthetic null data generation is relatively time-consuming; you may use the fast version (`fastVersion = TRUE`).
 
