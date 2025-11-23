@@ -61,6 +61,12 @@ constructNull <- function(
   synthetic_null_list <- if (usePca) {
     # Construct PCA
     message("Contruct PCA")
+    non_zero_genes <- apply(mat, 1, var) != 0
+    n_zero_genes <- sum(!non_zero_genes)
+    if (n_zero_genes > 0) {
+      message(n_zero_genes, " genes removed due to zero variances")
+    }
+    mat <- mat[non_zero_genes, , drop = F]
     normalized_mat <- t(logcp10k(as.matrix(mat)))
     pca_res <- prcomp(
       normalized_mat,
