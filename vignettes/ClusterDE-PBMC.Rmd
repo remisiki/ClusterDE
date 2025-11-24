@@ -29,17 +29,6 @@ knitr::opts_chunk$set(
 tools::R_user_dir("ClusterDE", which = "cache")
 ```
 
-```{r setup, message=FALSE, warning=FALSE, results='hide'}
-#tools::R_user_dir("ClusterDE", which="cache")
-library(ClusterDE)
-library(Seurat)
-library(SingleCellExperiment)
-library(ggplot2)
-library(patchwork)
-#library(SeuratData)
-library(Matrix)
-```
-
 # Download data
 The PBMC datasets are originally from `SeuratData`. We use one of them (10x Chromium (v3) from PBMC1 replicate). We filtered out some lowly epxressed genes to save computational time here.
 ```{r}
@@ -77,6 +66,7 @@ p1 + p2
 
 In this vignette, we are interested in cluster 2 vs 8, which approximately represent CD14+/CD16+ monocytes. Please note that ClusterDE is designed for 1 vs 1 comparison. Therefore, users may (1) choose the two interested clusters manually based on their knowledge or (2) use the two locally closest clusters from computation (e.g., `BuildClusterTree` in `Seurat`).
 ```{r}
+library(Seurat)
 pbmc <- BuildClusterTree(pbmc)
 PlotClusterTree(pbmc)
 ```
@@ -114,8 +104,6 @@ In contrast, the genes from ClusterDE do not have *LST1* and *RPS19* anymore.
 FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = c(res$gene[1:6]), ncol = 3)
 ```
 
-# PCA approximation
-
 # Customize null data generation
 
 Here we show how ClusterDE generates and calculates the synthetic null data p-values. The synthetic null data is first generated based on the target data (real subset data, pbmc_sub, which contains the two clusters you are interested in). You can increase the number of cores (CPUs) to speed it up.
@@ -143,6 +131,49 @@ res <- ClusterDE::callDE(original_pval, null_pval$p)
 The result table is the list of DEGs ranked by contrast scores, which is also used as the output of `findMarkers()`.
 ```{r}
 head(res)
+```
+
+# PCA approximation for faster null data generation
+
+For a more robust DEG detection, ClusterDE allows generating **multiple null data replicates**. By increasing number of `nRep` in `findMarkers()`, you can create several synthetic null datasets and compare all of them against the original DE markers. When generating many null data replicates (`nRep`) for DEG analysis, null data simulation can become time-consuming. ClusterDE provides a **PCA-based approximation** to speed up this process. By setting `flavour` to "pca" and increasing number of threads (`nCores`) in `findMarkers()`, the null datasets are generated faster while still preserving robustness.
+```{r}
+res <- ClusterDE::findMarkers(
+  pbmc_sub,
+  ident.1 = 2,
+  ident.2 = 8,
+  flavour = "pca",
+  nRep = 40,
+  nCores = 8
+)
+```
+
+The `record` column counts the frequency with which each gene is identified as a DEG across null data replicates.
+
+- A higher `record` value indicates that the gene is consistently called differentially expressed across multiple simulated null datasets.
+- This metric helps assess the **stability and reproducibility** of DE calls.
+```{r}
+head(res)
+```
+
+We can also visualize the genes found by ClusterDE with multiple replicates and PCA approximation.
+```{r, fig.width=10, fig.height=6}
+FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = c(res$gene[1:6]), ncol = 3)
+```
+
+To explicitly construct null data using PCA approximation, you can specify `usePca = T` and adjust number of PCs by changing `nPcs` in `constructNull()`.
+
+```{r}
+null_data <- ClusterDE::constructNull(pbmc_sub, usePca = T, nCores = 8, nRep = 40, nPcs = 200)
+```
+
+The returned `null_data` will contain a list of all replicates. Then we can use `calcNullPval()` to preprocess and calculate gene p-values for each replicate. Note that if PCA approximation is used, the simulated null data is not a true count matrix, so normalization should be skipped, and highly variable genes should be provided from real reference data.
+```{r}
+null_pval <- ClusterDE::calcNullPval(null_data, normalize = F, hvg = Seurat::VariableFeatures(pbmc_sub), nCores = 8)
+```
+
+Here we show part of the simulated null replicates in the same UMAP space as real data.
+```{r fig.width=10, fig.height=6}
+ClusterDE::dimPlot(pbmc_sub, null_pval$data[1:11])
 ```
 
 # Session information
