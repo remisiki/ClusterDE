@@ -45,7 +45,7 @@ dimPlot <- function(
   })
   set.seed(seed)
   null_names <- paste0("Null", seq_along(null_obj))
-  fig <- scDesign3::plot_reduceddim(ref_obj, null_obj, c("Ref", null_names), color_by = color_by)$p_umap +
+  scDesign3::plot_reduceddim(ref_obj, null_obj, c("Ref", null_names), color_by = color_by)$p_umap +
     ggplot2::facet_wrap(~ Method, nrow = nrow, ncol = ncol) +
     ggplot2::geom_point(alpha = 0.1) +
     ggplot2::theme_classic() +
