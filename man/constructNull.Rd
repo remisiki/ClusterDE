@@ -5,7 +5,7 @@
 \title{Construct the synthetic null data}
 \usage{
 constructNull(
-  mat,
+  obj,
   family = "nb",
   formula = NULL,
   extraInfo = NULL,
@@ -22,7 +22,7 @@ constructNull(
 )
 }
 \arguments{
-\item{mat}{An expression matrix (gene by cell). It can be a regular dense matrix or a \code{sparseMatrix}.}
+\item{obj}{A Seurat object. The reference data.}
 
 \item{family}{A string or a vector of strings of the distribution of your data.
 Must be one of 'nb', 'binomial', 'poisson', 'zip', 'zinb' or 'gaussian', which represent 'poisson distribution',

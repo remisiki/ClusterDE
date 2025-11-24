@@ -8,7 +8,7 @@
 #' @param seed Numeric; random seed for clustering reproducibility (default: 123).
 #' @param nCores An integer. The number of cores to use for parallel processing.
 #'
-#' @return A vector (if single input) or list (if multiple) of named p-values for each gene, corresponding to the null DEGs found by Seurat.
+#' @return A named list with preprocess data and gene p-values
 #'
 #' @export
 calcNullPval <- function(synthetic_null, normalize = T, hvg = NULL, seed = 123, nCores = 1) {

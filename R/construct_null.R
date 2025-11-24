@@ -4,7 +4,7 @@
 #'
 #' This function constructs the synthetic null data based on the target data (real data). The input is a expression matrix (gene by cell); the user should specify a distribution, which is usually Negative Binomial for count matrix.
 #'
-#' @param mat An expression matrix (gene by cell). It can be a regular dense matrix or a \code{sparseMatrix}.
+#' @param obj A Seurat object. The reference data.
 #' @param family A string or a vector of strings of the distribution of your data.
 #' Must be one of 'nb', 'binomial', 'poisson', 'zip', 'zinb' or 'gaussian', which represent 'poisson distribution',
 #' 'negative binomial distribution', 'zero-inflated poisson distribution', 'zero-inflated negative binomail distribution',
