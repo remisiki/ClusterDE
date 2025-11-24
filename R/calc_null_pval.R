@@ -72,11 +72,17 @@ calcNullPval <- function(synthetic_null, normalize = T, hvg = NULL, seed = 123, 
     )
     null_pval <- deg$p_val
     names(null_pval) <- rownames(deg)
-    null_pval
+    list(
+      data = data,
+      p = null_pval
+    )
   }, mc.cores = nCores, mc.retry = 5)
   if (length(null_pval_list) == 1) {
     null_pval_list[[1]]
   } else {
-    null_pval_list
+    list(
+      data = lapply(null_pval_list, `[[`, "data"),
+      p = lapply(null_pval_list, `[[`, "p")
+    )
   }
 }
