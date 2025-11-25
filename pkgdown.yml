@@ -1,0 +1,9 @@
+pandoc: 2.0.6
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  ClusterDE-PBMC: ClusterDE-PBMC.html
+last_built: 2025-11-25T02:02Z
+urls:
+  reference: https://songdongyuan1994.github.io/ClusterDE/reference
+  article: https://songdongyuan1994.github.io/ClusterDE/articles
