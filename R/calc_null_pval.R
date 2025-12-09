@@ -3,6 +3,7 @@
 #' Runs a Seurat-based null differential expression analysis for provided synthetic null datasets.
 #'
 #' @param synthetic_null A matrix (genes x cells), or a list of such matrices representing synthetic null data. If not a list, it will be coerced to a list.
+#' @param spatial_coords A data frame, should contain two columns representing X and Y coordinates if using spatial data. Default is NULL.
 #' @param normalize Logical; if \code{TRUE} (default), apply Seurat's NormalizeData to each dataset. If \code{FALSE}, sets assay data directly. Set to false if null data is generated using PCA approximation. It is recommended to provide hvg if normalize is false.
 #' @param hvg A list of feaures; will be applied if normalization is set to false.
 #' @param seed Numeric; random seed for clustering reproducibility (default: 123).

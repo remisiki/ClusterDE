@@ -4,10 +4,19 @@
 \alias{calcNullPval}
 \title{Calculate pval for each gene in synthetic null data}
 \usage{
-calcNullPval(synthetic_null, normalize = T, hvg = NULL, seed = 123, nCores = 1)
+calcNullPval(
+  synthetic_null,
+  spatial_coords = NULL,
+  normalize = T,
+  hvg = NULL,
+  seed = 123,
+  nCores = 1
+)
 }
 \arguments{
 \item{synthetic_null}{A matrix (genes x cells), or a list of such matrices representing synthetic null data. If not a list, it will be coerced to a list.}
+
+\item{spatial_coords}{A data frame, should contain two columns representing X and Y coordinates if using spatial data. Default is NULL.}
 
 \item{normalize}{Logical; if \code{TRUE} (default), apply Seurat's NormalizeData to each dataset. If \code{FALSE}, sets assay data directly. Set to false if null data is generated using PCA approximation. It is recommended to provide hvg if normalize is false.}
 

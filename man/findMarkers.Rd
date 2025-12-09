@@ -4,7 +4,15 @@
 \alias{findMarkers}
 \title{Find differential markers using ClusterDE}
 \usage{
-findMarkers(obj, ident.1, ident.2, nCores = 1, nRep = 1, flavour = "classic")
+findMarkers(
+  obj,
+  ident.1,
+  ident.2,
+  nCores = 1,
+  nRep = 1,
+  flavour = "classic",
+  spatial = NULL
+)
 }
 \arguments{
 \item{obj}{Seurat object containing expression data.}
@@ -18,6 +26,8 @@ findMarkers(obj, ident.1, ident.2, nCores = 1, nRep = 1, flavour = "classic")
 \item{nRep}{Number of null replicates.}
 
 \item{flavour}{Either \code{"classic"} or \code{"pca"}; selects null-construction method. \strong{classic}: uses default count matrix as simulation input. \strong{pca}: uses PCA approximation as simulation input, faster and more scalable when large number of replicates is needed.}
+
+\item{spatial}{A vector of 2 strings, the meta data column name representing X and Y coordinates if using spatial data. Default is NULL.}
 }
 \value{
 A table of DEG results.
