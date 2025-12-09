@@ -65,7 +65,7 @@ original_markers <- Seurat::FindMarkers(
   min.pct = 0,
   logfc.threshold = 0
 )
-print(sum(original_markers$p_val_adj < 0.05))
+message(paste0("Number of DE gene is ", sum(original_markers$p_val_adj < 0.05)))
 ```
 
 # Find DEGs using ClusterDE

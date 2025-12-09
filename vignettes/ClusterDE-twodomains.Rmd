@@ -169,12 +169,13 @@ head(original_markers)
 We can use `findMarkers()` from ClusterDE with `spatial` specified as name of X and Y coordinates in the data meta columns. Here in the example, coordinates are stored in `row` and `col`.
 ```{r}
 res <- ClusterDE::findMarkers(dlpfc_twodomain, ident.1 = 1, ident.2 = 2, spatial = c("row", "col"))
+head(res)
 ```
 
 # Visualize top marker genes
 
 We visualize the top DE genes from ClusterDE. As expected, the top genes detected by ClusterDE exhibit clear spatial expression patterns.
-```{r}
+```{r, fig.width=15, fig.height=6}
 top_genes_clusterde <- res$gene[1:6]
 expr <- Seurat::GetAssayData(dlpfc_twodomain, layer = "data")[top_genes_clusterde, , drop = F]
 x_coord <- dlpfc_twodomain@meta.data$row
@@ -187,7 +188,7 @@ plots <- lapply(top_genes_clusterde, function(gene) {
     Expr = as.numeric(expr[gene,])
   )
   ggplot2::ggplot(df, ggplot2::aes(x = X, y = Y, color = Expr)) +
-    ggplot2::geom_point(size = 0.5) +
+    ggplot2::geom_point(size = 1) +
     ggplot2::scale_colour_gradientn(colors = viridis::viridis_pal(option = "magma")(10)) +
     ggplot2::coord_fixed() +
     ggplot2::ggtitle(gene) +
@@ -195,7 +196,7 @@ plots <- lapply(top_genes_clusterde, function(gene) {
     ggplot2::theme(legend.position = "bottom")
 })
 
-patchwork::wrap_plots(plots, nrow = 1)
+patchwork::wrap_plots(plots, nrow = 2)
 ```
 
 # Session information
