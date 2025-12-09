@@ -92,21 +92,21 @@ pbmc <- Seurat::RunUMAP(pbmc, dims = 1:10)
 #> Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
 #> To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
 #> This message will be shown once per session
-#> 20:55:30 UMAP embedding parameters a = 0.9922 b = 1.112
-#> 20:55:30 Read 3222 rows and found 10 numeric columns
-#> 20:55:30 Using Annoy for neighbor search, n_neighbors = 30
-#> 20:55:30 Building Annoy index with metric = cosine, n_trees = 50
+#> 13:45:22 UMAP embedding parameters a = 0.9922 b = 1.112
+#> 13:45:22 Read 3222 rows and found 10 numeric columns
+#> 13:45:22 Using Annoy for neighbor search, n_neighbors = 30
+#> 13:45:22 Building Annoy index with metric = cosine, n_trees = 50
 #> 0%   10   20   30   40   50   60   70   80   90   100%
 #> [----|----|----|----|----|----|----|----|----|----|
 #> **************************************************|
-#> 20:55:31 Writing NN index file to temp file /tmp/Rtmpc6rjew/file140f8158131bf2
-#> 20:55:31 Searching Annoy index using 1 thread, search_k = 3000
-#> 20:55:31 Annoy recall = 100%
-#> 20:55:32 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
-#> 20:55:33 Initializing from normalized Laplacian + noise (using RSpectra)
-#> 20:55:33 Commencing optimization for 500 epochs, with 126446 positive edges
-#> 20:55:33 Using rng type: pcg
-#> 20:55:36 Optimization finished
+#> 13:45:23 Writing NN index file to temp file /tmp/RtmpDE5jH8/file2fc2bf726fb1a0
+#> 13:45:23 Searching Annoy index using 1 thread, search_k = 3000
+#> 13:45:23 Annoy recall = 100%
+#> 13:45:24 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+#> 13:45:25 Initializing from normalized Laplacian + noise (using RSpectra)
+#> 13:45:25 Commencing optimization for 500 epochs, with 126446 positive edges
+#> 13:45:25 Using rng type: pcg
+#> 13:45:29 Optimization finished
 p1 <- Seurat::DimPlot(pbmc, reduction = "umap", label = T) +
   ggplot2::ggtitle("Clustering result") +
   Seurat::NoLegend()
