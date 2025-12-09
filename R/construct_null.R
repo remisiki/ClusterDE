@@ -9,9 +9,7 @@
 #' Must be one of 'nb', 'binomial', 'poisson', 'zip', 'zinb' or 'gaussian', which represent 'poisson distribution',
 #' 'negative binomial distribution', 'zero-inflated poisson distribution', 'zero-inflated negative binomail distribution',
 #' and 'gaussian distribution' respectively. For UMI-counts data, we usually use 'nb'. Default is 'nb'.
-#' @param formula A string of the mu parameter formula. It defines the relationship between gene expression in synthetic null data and the extra covariates. Default is NULL (cell type case).
-#' For example, if your input data is a spatial data with X, Y coordinates, the formula can be 's(X, Y, bs = 'gp', k = 4)'.
-#' @param extraInfo A data frame of the extra covariates used in \code{formula}. For example, the 2D spatial coordinates. Default is NULL.
+#' @param spatial A vector of 2 strings, the meta data column name representing X and Y coordinates if using spatial data. Default is NULL.
 #' @param nCores An integer. The number of cores to use for Parallel processing.
 #' @param nRep An integer. The number of sampled synthetic null datasets. Default value is 1.
 #' @param parallelization A string indicating the specific parallelization function to use.
@@ -37,8 +35,7 @@
 constructNull <- function(
   obj,
   family = "nb",
-  formula = NULL,
-  extraInfo = NULL,
+  spatial = NULL,
   nCores = 1,
   nRep = 1,
   parallelization = "mcmapply",
@@ -56,6 +53,13 @@ constructNull <- function(
 
   if (nRep < nCores) {
     nCores <- nRep
+  }
+
+  # Set mu formula for spatial data/single cell data
+  mu_formula <- if ((!is.null(spatial)) && (length(spatial) == 2)) {
+    paste0("s(", spatial[[1]], ", ", spatial[[2]], ", bs = 'gp', k = 4)")
+  } else {
+    "1"
   }
 
   synthetic_null_list <- if (usePca) {
@@ -92,7 +96,7 @@ constructNull <- function(
       assay_use = "counts",
       celltype = "seurat_clusters",
       pseudotime = NULL,
-      spatial = NULL,
+      spatial = spatial,
       other_covariates = NULL,
       corr_by = "ind"
     )
@@ -101,7 +105,7 @@ constructNull <- function(
     marginal <- scDesign3::fit_marginal(
       data = data,
       predictor = "gene",
-      mu_formula = "1",
+      mu_formula = mu_formula,
       sigma_formula = "1",
       family_use = "gaussian",
       n_cores = nCores,
@@ -162,57 +166,30 @@ constructNull <- function(
     }, mc.cores = nCores, mc.retry = 5))
     new_count_list
   } else if (!fastVersion) {
-    if (is.null(formula) & is.null(extraInfo)) {
-      sce <- SingleCellExperiment::SingleCellExperiment(list(counts = mat))
-      SummarizedExperiment::colData(sce)$fake_variable <- "1"
-      newData <- scDesign3::scdesign3(
-        sce,
-        celltype = "fake_variable",
-        pseudotime = NULL,
-        spatial = NULL,
-        other_covariates = NULL,
-        empirical_quantile = FALSE,
-        mu_formula = "1",
-        sigma_formula = "1",
-        corr_formula = "1",
-        family_use = family,
-        nonzerovar = FALSE,
-        n_cores = nCores,
-        parallelization = parallelization,
-        important_feature = corrCut,
-        nonnegative = FALSE,
-        copula = "gaussian",
-        if_sparse = ifSparse,
-        fastmvn = FALSE,
-        n_rep = nRep
-      )
-      newData$new_count
-    } else {
-      sce <- SingleCellExperiment::SingleCellExperiment(list(counts = mat))
-      SummarizedExperiment::colData(sce) <- DataFrame(extraInfo)
-      SummarizedExperiment::colData(sce)$fake_variable <- "1"
-      newData <- scDesign3::scdesign3(
-        sce,
-        celltype = "fake_variable",
-        pseudotime = NULL,
-        spatial = NULL,
-        other_covariates = colnames(extraInfo),
-        empirical_quantile = FALSE,
-        mu_formula = formula,
-        sigma_formula = "1",
-        corr_formula = "1",
-        family_use = family,
-        nonzerovar = FALSE,
-        n_cores = nCores,
-        parallelization = parallelization,
-        important_feature = corrCut,
-        nonnegative = FALSE,
-        copula = "gaussian",
-        fastmvn = FALSE,
-        n_rep = nRep
-      )
-      newData$new_count
-    }
+    sce <- SingleCellExperiment::SingleCellExperiment(list(counts = mat))
+    SummarizedExperiment::colData(sce)$fake_variable <- "1"
+    newData <- scDesign3::scdesign3(
+      sce,
+      celltype = "fake_variable",
+      pseudotime = NULL,
+      spatial = spatial,
+      other_covariates = NULL,
+      empirical_quantile = FALSE,
+      mu_formula = mu_formula,
+      sigma_formula = "1",
+      corr_formula = "1",
+      family_use = family,
+      nonzerovar = FALSE,
+      n_cores = nCores,
+      parallelization = parallelization,
+      important_feature = corrCut,
+      nonnegative = FALSE,
+      copula = "gaussian",
+      if_sparse = ifSparse,
+      fastmvn = FALSE,
+      n_rep = nRep
+    )
+    newData$new_count
   } else {
     tol <- 1e-5
     mat <- as.matrix(mat)
@@ -682,7 +659,7 @@ constructNull <- function(
             if (is.na(para[x, 2])) {
               stats::rpois(n = n_cell, lambda = para[x, 1])
             } else {
-              rZIP(n = n_cell,
+              gamlss.dist::rZIP(n = n_cell,
                    sigma = para[x, 2],
                    mu = para[x, 1])
             }
