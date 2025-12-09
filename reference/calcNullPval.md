@@ -6,7 +6,14 @@ synthetic null datasets.
 ## Usage
 
 ``` r
-calcNullPval(synthetic_null, normalize = T, hvg = NULL, seed = 123, nCores = 1)
+calcNullPval(
+  synthetic_null,
+  spatial_coords = NULL,
+  normalize = T,
+  hvg = NULL,
+  seed = 123,
+  nCores = 1
+)
 ```
 
 ## Arguments
@@ -15,6 +22,11 @@ calcNullPval(synthetic_null, normalize = T, hvg = NULL, seed = 123, nCores = 1)
     
     A matrix (genes x cells), or a list of such matrices representing
     synthetic null data. If not a list, it will be coerced to a list.
+
+  - spatial\_coords:
+    
+    A data frame, should contain two columns representing X and Y
+    coordinates if using spatial data. Default is NULL.
 
   - normalize:
     

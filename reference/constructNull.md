@@ -9,8 +9,7 @@ corresponding synthetic null data.
 constructNull(
   obj,
   family = "nb",
-  formula = NULL,
-  extraInfo = NULL,
+  spatial = NULL,
   nCores = 1,
   nRep = 1,
   parallelization = "mcmapply",
@@ -40,18 +39,10 @@ constructNull(
     distribution' respectively. For UMI-counts data, we usually use
     'nb'. Default is 'nb'.
 
-  - formula:
+  - spatial:
     
-    A string of the mu parameter formula. It defines the relationship
-    between gene expression in synthetic null data and the extra
-    covariates. Default is NULL (cell type case). For example, if your
-    input data is a spatial data with X, Y coordinates, the formula can
-    be 's(X, Y, bs = 'gp', k = 4)'.
-
-  - extraInfo:
-    
-    A data frame of the extra covariates used in `formula`. For example,
-    the 2D spatial coordinates. Default is NULL.
+    A vector of 2 strings, the meta data column name representing X and
+    Y coordinates if using spatial data. Default is NULL.
 
   - nCores:
     

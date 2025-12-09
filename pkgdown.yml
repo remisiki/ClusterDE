@@ -2,8 +2,11 @@ pandoc: 2.0.6
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
+  ClusterDE-cellline: ClusterDE-cellline.html
+  ClusterDE-onedomain: ClusterDE-onedomain.html
   ClusterDE-PBMC: ClusterDE-PBMC.html
-last_built: 2025-11-25T02:02Z
+  ClusterDE-twodomains: ClusterDE-twodomains.html
+last_built: 2025-12-09T01:23Z
 urls:
   reference: https://songdongyuan1994.github.io/ClusterDE/reference
   article: https://songdongyuan1994.github.io/ClusterDE/articles

@@ -5,7 +5,15 @@ Find differential markers using ClusterDE
 ## Usage
 
 ``` r
-findMarkers(obj, ident.1, ident.2, nCores = 1, nRep = 1, flavour = "classic")
+findMarkers(
+  obj,
+  ident.1,
+  ident.2,
+  nCores = 1,
+  nRep = 1,
+  flavour = "classic",
+  spatial = NULL
+)
 ```
 
 ## Arguments
@@ -36,6 +44,11 @@ findMarkers(obj, ident.1, ident.2, nCores = 1, nRep = 1, flavour = "classic")
     **classic**: uses default count matrix as simulation input. **pca**:
     uses PCA approximation as simulation input, faster and more scalable
     when large number of replicates is needed.
+
+  - spatial:
+    
+    A vector of 2 strings, the meta data column name representing X and
+    Y coordinates if using spatial data. Default is NULL.
 
 ## Value
 
