@@ -217,7 +217,7 @@ plots <- lapply(top_genes_clusterde, function(gene) {
     Expr = as.numeric(expr[gene,])
   )
   ggplot2::ggplot(df, ggplot2::aes(x = X, y = Y, color = Expr)) +
-    ggplot2::geom_point(size = 0.5) +
+    ggplot2::geom_point(size = 1) +
     ggplot2::scale_colour_gradientn(colors = viridis::viridis_pal(option = "magma")(10)) +
     ggplot2::coord_fixed() +
     ggplot2::ggtitle(gene) +
@@ -225,7 +225,7 @@ plots <- lapply(top_genes_clusterde, function(gene) {
     ggplot2::theme(legend.position = "bottom")
 })
 
-patchwork::wrap_plots(plots, nrow = 1)
+patchwork::wrap_plots(plots, nrow = 2)
 ```
 
 ![](ClusterDE-twodomains_files/figure-html/unnamed-chunk-8-1.png)

@@ -157,21 +157,21 @@
 <span><span class="co">#&gt; Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric</span></span>
 <span><span class="co">#&gt; To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'</span></span>
 <span><span class="co">#&gt; This message will be shown once per session</span></span>
-<span><span class="co">#&gt; 20:30:57 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
-<span><span class="co">#&gt; 20:30:57 Read 3222 rows and found 10 numeric columns</span></span>
-<span><span class="co">#&gt; 20:30:57 Using Annoy for neighbor search, n_neighbors = 30</span></span>
-<span><span class="co">#&gt; 20:30:57 Building Annoy index with metric = cosine, n_trees = 50</span></span>
+<span><span class="co">#&gt; 20:55:30 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
+<span><span class="co">#&gt; 20:55:30 Read 3222 rows and found 10 numeric columns</span></span>
+<span><span class="co">#&gt; 20:55:30 Using Annoy for neighbor search, n_neighbors = 30</span></span>
+<span><span class="co">#&gt; 20:55:30 Building Annoy index with metric = cosine, n_trees = 50</span></span>
 <span><span class="co">#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</span></span>
 <span><span class="co">#&gt; [----|----|----|----|----|----|----|----|----|----|</span></span>
 <span><span class="co">#&gt; **************************************************|</span></span>
-<span><span class="co">#&gt; 20:30:58 Writing NN index file to temp file /tmp/RtmpkGg2MA/file13ab8f3bb8f3ac</span></span>
-<span><span class="co">#&gt; 20:30:58 Searching Annoy index using 1 thread, search_k = 3000</span></span>
-<span><span class="co">#&gt; 20:30:58 Annoy recall = 100%</span></span>
-<span><span class="co">#&gt; 20:30:59 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30</span></span>
-<span><span class="co">#&gt; 20:30:59 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
-<span><span class="co">#&gt; 20:31:00 Commencing optimization for 500 epochs, with 126446 positive edges</span></span>
-<span><span class="co">#&gt; 20:31:00 Using rng type: pcg</span></span>
-<span><span class="co">#&gt; 20:31:03 Optimization finished</span></span>
+<span><span class="co">#&gt; 20:55:31 Writing NN index file to temp file /tmp/Rtmpc6rjew/file140f8158131bf2</span></span>
+<span><span class="co">#&gt; 20:55:31 Searching Annoy index using 1 thread, search_k = 3000</span></span>
+<span><span class="co">#&gt; 20:55:31 Annoy recall = 100%</span></span>
+<span><span class="co">#&gt; 20:55:32 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30</span></span>
+<span><span class="co">#&gt; 20:55:33 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
+<span><span class="co">#&gt; 20:55:33 Commencing optimization for 500 epochs, with 126446 positive edges</span></span>
+<span><span class="co">#&gt; 20:55:33 Using rng type: pcg</span></span>
+<span><span class="co">#&gt; 20:55:36 Optimization finished</span></span>
 <span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">Seurat</span><span class="fu">::</span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html" class="external-link">DimPlot</a></span><span class="op">(</span><span class="va">pbmc</span>, reduction <span class="op">=</span> <span class="st">"umap"</span>, label <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Clustering result"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">Seurat</span><span class="fu">::</span><span class="fu"><a href="https://satijalab.org/seurat/reference/SeuratTheme.html" class="external-link">NoLegend</a></span><span class="op">(</span><span class="op">)</span></span>

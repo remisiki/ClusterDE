@@ -102,21 +102,21 @@ cellline <- Seurat::RunUMAP(cellline, dims = 1:10)
 #> Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
 #> To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
 #> This message will be shown once per session
-#> 20:24:24 UMAP embedding parameters a = 0.9922 b = 1.112
-#> 20:24:24 Read 758 rows and found 10 numeric columns
-#> 20:24:24 Using Annoy for neighbor search, n_neighbors = 30
-#> 20:24:24 Building Annoy index with metric = cosine, n_trees = 50
+#> 20:48:58 UMAP embedding parameters a = 0.9922 b = 1.112
+#> 20:48:58 Read 758 rows and found 10 numeric columns
+#> 20:48:58 Using Annoy for neighbor search, n_neighbors = 30
+#> 20:48:58 Building Annoy index with metric = cosine, n_trees = 50
 #> 0%   10   20   30   40   50   60   70   80   90   100%
 #> [----|----|----|----|----|----|----|----|----|----|
 #> **************************************************|
-#> 20:24:24 Writing NN index file to temp file /tmp/RtmpseYrrs/file1393997fdce16
-#> 20:24:24 Searching Annoy index using 1 thread, search_k = 3000
-#> 20:24:24 Annoy recall = 100%
-#> 20:24:24 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
-#> 20:24:25 Initializing from normalized Laplacian + noise (using RSpectra)
-#> 20:24:25 Commencing optimization for 500 epochs, with 27914 positive edges
-#> 20:24:25 Using rng type: pcg
-#> 20:24:26 Optimization finished
+#> 20:48:58 Writing NN index file to temp file /tmp/Rtmp823XBi/file13f8bc2fc15766
+#> 20:48:58 Searching Annoy index using 1 thread, search_k = 3000
+#> 20:48:58 Annoy recall = 100%
+#> 20:48:59 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+#> 20:48:59 Initializing from normalized Laplacian + noise (using RSpectra)
+#> 20:48:59 Commencing optimization for 500 epochs, with 27914 positive edges
+#> 20:48:59 Using rng type: pcg
+#> 20:49:01 Optimization finished
 Seurat::DimPlot(cellline, reduction = "umap") + ggplot2::ggtitle("Clustering result")
 ```
 
@@ -135,8 +135,8 @@ original_markers <- Seurat::FindMarkers(
   min.pct = 0,
   logfc.threshold = 0
 )
-print(sum(original_markers$p_val_adj < 0.05))
-#> [1] 1023
+message(paste0("Number of DE gene is ", sum(original_markers$p_val_adj < 0.05)))
+#> Number of DE gene is 1023
 ```
 
 ## Find DEGs using ClusterDE
