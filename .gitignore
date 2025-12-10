@@ -8,3 +8,5 @@ inst/doc
 .env
 *.tex
 docs
+src/*.o
+src/*.so

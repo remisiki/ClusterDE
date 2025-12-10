@@ -48,7 +48,10 @@ Suggests: parallel,
           spatialLIBD
 LinkingTo: Rcpp,
            RcppArmadillo 
-Remotes: SONGDONGYUAN1994/scDesign3
+Remotes:
+    SONGDONGYUAN1994/scDesign3,
+    immunogenomics/presto,
+    gfkse/bettermc
 biocViews:
          Software,
          SingleCell,
@@ -56,5 +59,5 @@ biocViews:
 URL: https://github.com/SONGDONGYUAN1994/ClusterDE, https://songdongyuan1994.github.io/ClusterDE/
 BugReports: https://github.com/SONGDONGYUAN1994/ClusterDE/issues
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 VignetteBuilder: knitr

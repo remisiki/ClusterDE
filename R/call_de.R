@@ -22,84 +22,115 @@
 #' res <- callDE(targetScores, nullScores, correct = FALSE)
 #'
 #' @export callDE
-callDE <- function(targetScores,
-                   nullScores,
-                   nlogTrans = TRUE,
-                   FDR = 0.05,
-                   contrastScore = "diff",
-                   correct = FALSE,
-                   threshold = "BC",
-                   ordering = TRUE) {
-  value <- null <- target <- cs <- NULL
-
-  if(is.null(names(targetScores))|is.null(names(nullScores))) {
-    stop("Both scores should have gene names!")
+callDE <- function(
+  targetScores,
+  nullScores,
+  nlogTrans = TRUE,
+  FDR = 0.05,
+  contrastScore = "diff",
+  correct = FALSE,
+  threshold = "BC",
+  ordering = TRUE,
+  nCores = 1
+) {
+  nullScoresList <- if (!is.list(nullScores)) {
+    list(nullScores)
+  } else {
+    nullScores
   }
-
-  tbl_target <- dplyr::as_tibble(targetScores, rownames = "Gene")
-  tbl_target <- dplyr::rename(tbl_target, target = value)
-  tbl_null <- dplyr::as_tibble(nullScores, rownames = "Gene")
-  tbl_null <- dplyr::rename(tbl_null, null = value)
-
-  tbl_merge <- dplyr::left_join(tbl_target, tbl_null, by = "Gene")
-  if(nlogTrans) {
-    tbl_merge <- dplyr::mutate(tbl_merge, target = -log10(target), null = -log10(null))
+  nRep <- length(nullScoresList)
+  if (nRep < nCores) {
+    nCores <- nRep
   }
+  res_list <- bettermc::mclapply(nullScoresList, function(nullScores) {
+    record <- rep(0, length(targetScores))
+    names(record) <- names(targetScores)
+    value <- null <- target <- cs <- NULL
 
-  if(contrastScore == 'diff') {
-    tbl_merge <- dplyr::mutate(tbl_merge, cs = target - null) ## Diff contrast scores
-
-    if(correct) {
-      if(PairedData::yuen.t.test(x = tbl_merge$target, y = tbl_merge$null, alternative = "greater", paired = TRUE, tr = 0.1)$p.value < 0.001) {
-        fit <- MASS::rlm(tbl_merge$target ~ tbl_merge$null, maxit = 100)
-        tbl_merge$cs <- fit$residuals
-      }
+    if (is.null(names(targetScores)) | is.null(names(nullScores))) {
+      stop("Both scores should have gene names!")
     }
-  } else if (contrastScore == 'max') {
-    tbl_merge <- dplyr::mutate(tbl_merge, cs = max(target, null)*sign(target - null))
+
+    tbl_target <- dplyr::as_tibble(targetScores, rownames = "Gene")
+    tbl_target <- dplyr::rename(tbl_target, target = value)
+    tbl_null <- dplyr::as_tibble(nullScores, rownames = "Gene")
+    tbl_null <- dplyr::rename(tbl_null, null = value)
+
+    tbl_merge <- dplyr::left_join(tbl_target, tbl_null, by = "Gene")
+    if (nlogTrans) {
+      tbl_merge <- dplyr::mutate(tbl_merge, target = -log10(target), null = -log10(null))
+    }
+
+    if (contrastScore == 'diff') {
+      tbl_merge <- dplyr::mutate(tbl_merge, cs = target - null) ## Diff contrast scores
+
+      if (correct) {
+        if (PairedData::yuen.t.test(x = tbl_merge$target, y = tbl_merge$null, alternative = "greater", paired = TRUE, tr = 0.1)$p.value < 0.001) {
+          fit <- MASS::rlm(tbl_merge$target ~ tbl_merge$null, maxit = 100)
+          tbl_merge$cs <- fit$residuals
+        }
+      }
+    } else if (contrastScore == 'max') {
+      tbl_merge <- dplyr::mutate(tbl_merge, cs = max(target, null) * sign(target - null))
     } else stop("Contrast score must be constructed by 'diff' or 'max' method.")
 
 
-  tbl_merge <- dplyr::mutate(tbl_merge, q = cs2q(contrastScore = tbl_merge$cs, threshold = threshold))
-  if(ordering) {
-    tbl_merge <- dplyr::arrange(tbl_merge, dplyr::desc(cs))
-  }
+    tbl_merge <- dplyr::mutate(tbl_merge, q = cs2q(contrastScore = tbl_merge$cs, threshold = threshold))
+    # Rank the genes in the same order as target scores
+    tbl_merge <- tbl_merge[match(names(targetScores), tbl_merge$Gene), , drop = F]
 
-  DEgenes <- as.vector(dplyr::filter(tbl_merge, q <= FDR)$Gene)
-  return(list(targetFDR = FDR, DEgenes = DEgenes, summaryTable = tbl_merge))
+    DEgenes <- as.vector(dplyr::filter(tbl_merge, q <= FDR)$Gene)
+    record[DEgenes] <- 1
+    data.frame(
+      gene = tbl_merge$Gene,
+      record = record,
+      cs = tbl_merge$cs
+    )
+  }, mc.cores = nCores, mc.retry = 5)
+  res <- dplyr::bind_rows(res_list)
+  res <- dplyr::group_by(res, gene)
+  res <- dplyr::summarise(
+    res,
+    cs = mean(cs, na.rm = T),
+    record = mean(record, na.rm = T),
+    .groups = "drop"
+  )
+  if (ordering) {
+    res <- res[order(res$cs, decreasing = T),]
+  }
+  res
 }
 
-cs2q <- function(contrastScore, nnull = 1, threshold = "BC"){
+cs2q <- function(contrastScore, nnull = 1, threshold = "BC") {
   stopifnot(threshold == "BC" | threshold == "DS")
 
   contrastScore[is.na(contrastScore)] = 0 # impute missing contrast scores with 0
   c_abs = abs(contrastScore[contrastScore != 0])
-  c_abs  = sort(unique(c_abs))
+  c_abs = sort(unique(c_abs))
 
   i = 1
   emp_fdp = rep(NA, length(c_abs))
   emp_fdp[1] = 1
 
-  if(threshold == "BC") {
-    while(i <= length(c_abs)){
+  if (threshold == "BC") {
+    while (i <= length(c_abs)) {
       # print(i)
       t = c_abs[i]
-      emp_fdp[i] = min((1/nnull + 1/nnull * sum(contrastScore <= -t))/ sum(contrastScore >= t),1)
+      emp_fdp[i] = min((1 / nnull + 1 / nnull * sum(contrastScore <= -t)) / sum(contrastScore >= t), 1)
 
-      if (i >=2){emp_fdp[i] = min(emp_fdp[i], emp_fdp[i-1])}
+      if (i >= 2) { emp_fdp[i] = min(emp_fdp[i], emp_fdp[i - 1]) }
       i = i + 1
     }
   } else if (threshold == "DS") {
-    while(i <= length(c_abs)){
+    while (i <= length(c_abs)) {
       # print(i)
       t = c_abs[i]
-      emp_fdp[i] = min((1/nnull * sum(contrastScore <= -t))/ sum(contrastScore >= t),1)
+      emp_fdp[i] = min((1 / nnull * sum(contrastScore <= -t)) / sum(contrastScore >= t), 1)
 
-      if (i >=2){emp_fdp[i] = min(emp_fdp[i], emp_fdp[i-1])}
+      if (i >= 2) { emp_fdp[i] = min(emp_fdp[i], emp_fdp[i - 1]) }
       i = i + 1
     }
-  } else {stop("Method must be BC or DS!")}
-
+  } else { stop("Method must be BC or DS!") }
 
 
   c_abs = c_abs[!is.na(emp_fdp)]

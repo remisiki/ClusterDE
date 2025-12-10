@@ -26,102 +26,69 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-tools::R_user_dir("ClusterDE", which="cache")
+tools::R_user_dir("ClusterDE", which = "cache")
 ```
 
-```{r setup, message=FALSE, warning=FALSE, results='hide'}
-#tools::R_user_dir("ClusterDE", which="cache")
-library(ClusterDE)
-library(Seurat)
-library(SingleCellExperiment)
-library(ggplot2)
-```
+# Download data
 
-## Download data
-
-We download the a cell line data set H2228. The original data is from [Tian et al., Nature Methods 2019](https://github.com/LuyiTian/sc_mixology) as the gold standard for benchmarking the accuracy of clustering. Since the data is from the pure cell line, it should not have cell types, and, of course, between cell type DE genes. **Note**: it does not mean that there are no variations within one cell line; of course there are, e.g., cell cycle, total UMI, etc. However, these variations do not represent **discrete cell groups** and essentially it means you should not using your obtained clusters to explain the variation.
+We download the cell line data set H2228. The original data is from [Tian et al., Nature Methods 2019](https://github.com/LuyiTian/sc_mixology) as the gold standard for benchmarking the accuracy of clustering. Since the data is from the pure cell line, it should not have cell types, and, of course, between cell type DE genes. **Note**: it does not mean that there are no variations within one cell line; of course there are, e.g., cell cycle, total UMI, etc. However, these variations do not represent **discrete cell groups**, and essentially it means you should not use your obtained clusters to explain the variation.
 ```{r}
-sce <- readRDS(url("https://figshare.com/ndownloader/files/41395260"))
-cellline <- Seurat::as.Seurat(sce)
+# sce <- readRDS(url("https://figshare.com/ndownloader/files/41395260"))
+# cellline <- Seurat::as.Seurat(sce)
+data(cellline, package = "ClusterDE")
 ```
 
-## Run the regular Seurat pipeline
+# Run the regular Seurat pipeline
 
 We perform the default Seurat clustering. Please note that ClusterDE is designed for 1 vs 1 comparison; therefore, we set the resolution as 0.2 here to obtain two clusters for illustration purpose.
 ```{r}
 RNGkind("L'Ecuyer-CMRG")
 set.seed(123)
-cellline <- UpdateSeuratObject(cellline) ## Avoid errors
-cellline <- NormalizeData(object = cellline)
-cellline <- FindVariableFeatures(object = cellline)
-cellline <- ScaleData(object = cellline)
-cellline <- RunPCA(object = cellline)
-cellline <- FindNeighbors(object = cellline)
-cellline <- FindClusters(object = cellline, resolution = 0.2)
-cellline <- RunUMAP(object = cellline, dims = 1:10)
-DimPlot(object = cellline, reduction = "umap") + ggtitle("Clustering result")
-```
-From the UMAP, the two clusters seem to be dubious. Although we do not expect the existence of cell types, when we perform Seurat DE test between the two clusters, and we get > 1000 genes with FDR < 0.05. It means that the double dipping introduces a huge number of discoveries.
-
-```{r}
-original_markers <- FindMarkers(cellline, 
-                                ident.1 = 0, 
-                                ident.2 = 1, 
-                                min.pct = 0, 
-                                logfc.threshold = 0)
-print(sum(original_markers$p_val_adj < 0.05))
+cellline <- Seurat::UpdateSeuratObject(cellline)
+cellline <- Seurat::NormalizeData(cellline)
+cellline <- Seurat::FindVariableFeatures(cellline)
+cellline <- Seurat::ScaleData(cellline)
+cellline <- Seurat::RunPCA(cellline)
+cellline <- Seurat::FindNeighbors(cellline)
+cellline <- Seurat::FindClusters(cellline, resolution = 0.2)
+cellline <- Seurat::RunUMAP(cellline, dims = 1:10)
+Seurat::DimPlot(cellline, reduction = "umap") + ggplot2::ggtitle("Clustering result")
 ```
 
-## Generate synthetic null data
+From the UMAP, the two clusters seem to be dubious. Although we do not expect the existence of cell types, when we perform Seurat DE test between the two clusters, and we get > 1000 genes with FDR < 0.05. It means that the double-dipping introduces a huge number of discoveries.
 
-We first generate the synthetic null data based on the target data (real data). You can increase the number of cores to speed it up.
 ```{r}
-count_mat <- GetAssayData(object = cellline, slot = "counts")
-set.seed(123)
-system.time(synthetic_null <- constructNull(count_mat, nCores = 10, fastVersion = TRUE, family = "nb", ifSparse = FALSE, nRep = 1))
+original_markers <- Seurat::FindMarkers(
+  cellline,
+  ident.1 = 0,
+  ident.2 = 1,
+  min.pct = 0,
+  logfc.threshold = 0
+)
+message(paste0("Number of DE gene is ", sum(original_markers$p_val_adj < 0.05)))
 ```
 
-We perform the same pipeline as we did for target data. Please note we need two clusters here, too. This is straightforward for clustering method with predefined cluster numbers, e.g., K-means. For louvain clustering used in Seurat you may manually adjust the resolution parameter so that we still get two clusters.
-```{r}
-cellline_null <- CreateSeuratObject(counts = synthetic_null)
+# Find DEGs using ClusterDE
 
-set.seed(123)
-cellline_null <- NormalizeData(object = cellline_null)
-cellline_null <- FindVariableFeatures(object = cellline_null)
-cellline_null <- ScaleData(object = cellline_null)
-cellline_null <- RunPCA(object = cellline_null)
-cellline_null <- FindNeighbors(object = cellline_null)
-cellline_null <- FindClusters(object = cellline_null, resolution = 0.3)
-cellline_null <- RunUMAP(object = cellline_null, dims = 1:10)
-DimPlot(object = cellline_null, reduction = "umap")
-```
-We perform the DE test on synthetic null data.
+We can use `findMarkers()` to perform null-calibrated post-clustering differential expression. The result table is sorted by contrast scores.
 ```{r}
-null_markers <- FindMarkers(cellline_null, 
-                            ident.1 = 0, 
-                            ident.2 = 1, 
-                            min.pct = 0, 
-                            logfc.threshold = 0)
+res <- ClusterDE::findMarkers(cellline, ident.1 = 0, ident.2 = 1)
 ```
 
-We extract the p-values from both original data and synthetic null data, then use `ClusterDE` to "compare" them. We do not discover any DE genes.
+We can observe from the results that all genes have a frequency record of 0, which means that we do not detect any DE genes.
 ```{r}
-original_pval <- original_markers$p_val
-names(original_pval) <- rownames(original_markers)
-
-null_pval <- null_markers$p_val
-names(null_pval) <- rownames(null_markers)
-
-res <- ClusterDE::callDE(original_pval, null_pval, nlogTrans = TRUE)
-cat(paste0("Number of DE gene is ", length(res$DEgenes)))
+message(paste0("Number of DE gene is ", sum(res$record > 0)))
 ```
 
 We can also visualize the distribution of contrast scores (diff between the -log p-values from real and null). It is roughly symmetric around 0.
 ```{r}
-ggplot(data = res$summaryTable, aes(x = cs)) + geom_histogram(fill = "white", color = "black") + theme_bw() + ggtitle("Distribution of constrast scores")
+ggplot2::ggplot(data = res, ggplot2::aes(x = cs)) +
+  ggplot2::geom_histogram(fill = "white", color = "black") +
+  ggplot2::theme_bw() +
+  ggplot2::ggtitle("Distribution of constrast scores")
 ```
 
-## Session information
+# Session information
 ```{r}
 sessionInfo()
 ```

@@ -5,10 +5,9 @@
 \title{Construct the synthetic null data}
 \usage{
 constructNull(
-  mat,
+  obj,
   family = "nb",
-  formula = NULL,
-  extraInfo = NULL,
+  spatial = NULL,
   nCores = 1,
   nRep = 1,
   parallelization = "mcmapply",
@@ -16,21 +15,20 @@ constructNull(
   ifSparse = FALSE,
   corrCut = 0.1,
   BPPARAM = NULL,
-  approximation = FALSE
+  approximation = FALSE,
+  usePca = F,
+  nPcs = 200
 )
 }
 \arguments{
-\item{mat}{An expression matrix (gene by cell). It can be a regular dense matrix or a \code{sparseMatrix}.}
+\item{obj}{A Seurat object. The reference data.}
 
 \item{family}{A string or a vector of strings of the distribution of your data.
 Must be one of 'nb', 'binomial', 'poisson', 'zip', 'zinb' or 'gaussian', which represent 'poisson distribution',
 'negative binomial distribution', 'zero-inflated poisson distribution', 'zero-inflated negative binomail distribution',
 and 'gaussian distribution' respectively. For UMI-counts data, we usually use 'nb'. Default is 'nb'.}
 
-\item{formula}{A string of the mu parameter formula. It defines the relationship between gene expression in synthetic null data and the extra covariates. Default is NULL (cell type case).
-For example, if your input data is a spatial data with X, Y coordinates, the formula can be 's(X, Y, bs = 'gp', k = 4)'.}
-
-\item{extraInfo}{A data frame of the extra covariates used in \code{formula}. For example, the 2D spatial coordinates. Default is NULL.}
+\item{spatial}{A vector of 2 strings, the meta data column name representing X and Y coordinates if using spatial data. Default is NULL.}
 
 \item{nCores}{An integer. The number of cores to use for Parallel processing.}
 
@@ -49,8 +47,12 @@ Must be one of 'mcmapply', 'bpmapply', or 'pbmcmapply', which corresponds to the
 \item{BPPARAM}{A \code{MulticoreParam} object or NULL. When the parameter parallelization = 'mcmapply' or 'pbmcmapply',
 this parameter must be NULL. When the parameter parallelization = 'bpmapply',  this parameter must be one of the}
 
-\item{Approximation}{A logic value. For a high-latitude counting matrix, Approximation can increase the speed of data generation while ensuring accuracy. Note that it only takes effect if "fastVersion=TRUE, Approximation=TRUE". Default is FALSE.
+\item{usePca}{A logic value. Whether to use PCA approximation. Default is FALSE.}
+
+\item{nPcs}{A numeric value. Number of PCs to use when usePca=T. Default is 200.
 \code{MulticoreParam} object offered by the package 'BiocParallel. The default value is NULL.}
+
+\item{Approximation}{A logic value. For a high-latitude counting matrix, Approximation can increase the speed of data generation while ensuring accuracy. Note that it only takes effect if "fastVersion=TRUE, Approximation=TRUE". Default is FALSE.}
 }
 \value{
 The expression matrix of the synthetic null data.
