@@ -30,6 +30,7 @@ findMarkers <- function(
     min.pct = 0,
     logfc.threshold = 0
   )
+  original_markers <- original_markers[original_markers$avg_log2FC > 0,]
   original_pval <- original_markers$p_val
   names(original_pval) <- rownames(original_markers)
   null_pval <- if (!is.null(spatial)) {

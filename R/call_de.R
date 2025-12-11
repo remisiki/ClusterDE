@@ -10,7 +10,7 @@
 #' @param FDR A numeric value of the target False Discovery Rate (FDR). Must be 'diff' or 'max'.
 #' @param contrastScore A string value of the way to construct contrast scores. The choice can be
 #' @param correct A logical value. If TRUE, perform the correction to make the distribution of contrast scores approximately symmetric. Default is FALSE.
-#' @param threshold A string value of the threshold method. Must be 'BC' or 'DS'.
+#' @param threshold A string value of the threshold method. Must be "BC" or "DS". Default is "DS"
 #' @param ordering A logic value. If TRUE, order the genes in the returned table by their significance. Default is TRUE.
 #'
 #' @return A list of target FDR, DE genes, and the detailed summary table.
@@ -29,7 +29,7 @@ callDE <- function(
   FDR = 0.05,
   contrastScore = "diff",
   correct = FALSE,
-  threshold = "BC",
+  threshold = "DS",
   ordering = TRUE,
   nCores = 1
 ) {

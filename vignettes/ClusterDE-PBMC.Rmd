@@ -79,30 +79,31 @@ pbmc_sub <- subset(x = pbmc, idents = c(2, 8))
 non_zero_genes <- apply(Seurat::GetAssayData(pbmc_sub, layer = "counts"), 1, var) != 0
 pbmc_sub <- pbmc_sub[non_zero_genes,]
 
-original_markers <- FindMarkers(
+original_markers <- Seurat::FindMarkers(
   pbmc_sub,
-  ident.1 = 2,
-  ident.2 = 8,
+  ident.1 = 8,
+  ident.2 = 2,
   min.pct = 0,
   logfc.threshold = 0
 )
+original_markers <- original_markers[original_markers$avg_log2FC > 0,]
 ```
 
 # Find DEGs using ClusterDE
 
 We can use `findMarkers()` to perform null-calibrated post-clustering differential expression. The result table is sorted by contrast scores.
 ```{r}
-res <- ClusterDE::findMarkers(pbmc_sub, ident.1 = 2, ident.2 = 8)
+res <- ClusterDE::findMarkers(pbmc_sub, ident.1 = 8, ident.2 = 2)
 head(res)
 ```
 
 To compare the result from the naive Seurat pipeline and ClusterDE, we first visualize the top 6 DE genes from Seurat. Genes *LST1* and *RPS19* are both highly expressed in two clusters. In addition, *RPS19* is reported as a stable housekeeping genes in several studies. Note that it does not mean the expression levels of *LST1* and *RPS19* are the same between the two cell types. It means that they are not good cell type markers. Philosophically speaking, it means that **conditional on the two clusters are obtained by clustering algorithm, LST1 and RPS19 are less likely to be the cell type markers between the two cell types**.
 ```{r, fig.width=10, fig.height=6}
-FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = c(rownames(original_markers)[1:6]), ncol = 3)
+Seurat::FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = rownames(original_markers)[1:6], ncol = 3)
 ```
 In contrast, the genes from ClusterDE do not have *LST1* and *RPS19* anymore.
 ```{r, fig.width=10, fig.height=6}
-FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = c(res$gene[1:6]), ncol = 3)
+Seurat::FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = res$gene[1:6], ncol = 3)
 ```
 
 # Customize null data generation
@@ -140,8 +141,8 @@ For a more robust DEG detection, ClusterDE allows generating **multiple null dat
 ```{r message=F, warning=F, results='hide'}
 res <- ClusterDE::findMarkers(
   pbmc_sub,
-  ident.1 = 2,
-  ident.2 = 8,
+  ident.1 = 8,
+  ident.2 = 2,
   flavour = "pca",
   nRep = 40,
   nCores = 8
@@ -158,7 +159,7 @@ head(res)
 
 We can also visualize the genes found by ClusterDE with multiple replicates and PCA approximation.
 ```{r fig.width=10, fig.height=6}
-FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = c(res$gene[1:6]), ncol = 3)
+Seurat::FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = res$gene[1:6], ncol = 3)
 ```
 
 To explicitly construct null data using PCA approximation, you can specify `usePca = T` and adjust number of PCs by changing `nPcs` in `constructNull()`.
