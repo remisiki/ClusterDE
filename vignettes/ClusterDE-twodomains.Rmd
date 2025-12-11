@@ -153,14 +153,15 @@ dlpfc_twodomain <- Seurat::as.Seurat(dlpfc_cluster)
 Seurat::Idents(dlpfc_twodomain) <- "spatial.cluster"
 original_markers <- Seurat::FindMarkers(
   object = dlpfc_twodomain,
-  ident.1 = 1,
-  ident.2 = 2,
+  ident.1 = 2,
+  ident.2 = 1,
   test.use = "wilcox",
   logfc.threshold = 0,
   min.pct = 0,
   min.cells.feature = 1,
   min.cells.group = 1
 )
+original_markers <- original_markers[original_markers$avg_log2FC > 0,]
 head(original_markers)
 ```
 
@@ -168,7 +169,7 @@ head(original_markers)
 
 We can use `findMarkers()` from ClusterDE with `spatial` specified as name of X and Y coordinates in the data meta columns. Here in the example, coordinates are stored in `row` and `col`.
 ```{r}
-res <- ClusterDE::findMarkers(dlpfc_twodomain, ident.1 = 1, ident.2 = 2, spatial = c("row", "col"))
+res <- ClusterDE::findMarkers(dlpfc_twodomain, ident.1 = 2, ident.2 = 1, spatial = c("row", "col"))
 head(res)
 ```
 
