@@ -228,7 +228,7 @@ sessionInfo()
 #>   [9] sctransform_0.4.2           R6_2.6.1                   
 #>  [11] DirichletReg_0.7-2          lazyeval_0.2.2             
 #>  [13] uwot_0.2.3                  rhdf5filters_1.14.1        
-#>  [15] withr_3.0.2                 ClusterDE_0.99.3           
+#>  [15] withr_3.0.2                 ClusterDE_0.99.4           
 #>  [17] gridExtra_2.3               progressr_0.17.0           
 #>  [19] cli_3.6.5                   Biobase_2.62.0             
 #>  [21] textshaping_1.0.4           spatstat.explore_3.5-3     

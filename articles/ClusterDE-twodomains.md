@@ -279,7 +279,7 @@ sessionInfo()
 #>  [11] R6_2.6.1                    DirichletReg_0.7-2         
 #>  [13] lazyeval_0.2.2              uwot_0.2.3                 
 #>  [15] rhdf5filters_1.14.1         withr_3.0.2                
-#>  [17] ClusterDE_0.99.3            gridExtra_2.3              
+#>  [17] ClusterDE_0.99.4            gridExtra_2.3              
 #>  [19] progressr_0.17.0            cli_3.6.5                  
 #>  [21] Biobase_2.62.0              textshaping_1.0.4          
 #>  [23] spatstat.explore_3.5-3      fastDummies_1.7.5          
