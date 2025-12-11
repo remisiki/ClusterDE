@@ -13,7 +13,7 @@ callDE(
   FDR = 0.05,
   contrastScore = "diff",
   correct = FALSE,
-  threshold = "BC",
+  threshold = "DS",
   ordering = TRUE,
   nCores = 1
 )
@@ -55,12 +55,13 @@ callDE(
 
   - threshold:
     
-    A string value of the threshold method. Must be 'BC' or 'DS'.
+    A string value of the threshold method. Must be "BC" or "DS".
+    Default is "DS"
 
   - ordering:
     
     A logic value. If TRUE, order the genes in the returned table by
-    their significance. Default is TRUE.
+    their frequency and significence. Default is TRUE.
 
 ## Value
 

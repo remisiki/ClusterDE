@@ -61,7 +61,7 @@
       Department of Genetics &amp; Genome Sciences, UConn Health<br><a class="author_email" href="mailto:#"></a><a href="mailto:dongyuansong@ucla.edu">dongyuansong@ucla.edu</a>
       </address>
                   
-            <h4 data-toc-skip class="date">9 December 2025</h4>
+            <h4 data-toc-skip class="date">11 December 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SONGDONGYUAN1994/ClusterDE/blob/HEAD/vignettes/ClusterDE-PBMC.Rmd" class="external-link"><code>vignettes/ClusterDE-PBMC.Rmd</code></a></small>
       <div class="d-none name"><code>ClusterDE-PBMC.Rmd</code></div>
@@ -157,21 +157,21 @@
 <span><span class="co">#&gt; Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric</span></span>
 <span><span class="co">#&gt; To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'</span></span>
 <span><span class="co">#&gt; This message will be shown once per session</span></span>
-<span><span class="co">#&gt; 13:45:22 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
-<span><span class="co">#&gt; 13:45:22 Read 3222 rows and found 10 numeric columns</span></span>
-<span><span class="co">#&gt; 13:45:22 Using Annoy for neighbor search, n_neighbors = 30</span></span>
-<span><span class="co">#&gt; 13:45:22 Building Annoy index with metric = cosine, n_trees = 50</span></span>
+<span><span class="co">#&gt; 03:12:07 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
+<span><span class="co">#&gt; 03:12:07 Read 3222 rows and found 10 numeric columns</span></span>
+<span><span class="co">#&gt; 03:12:07 Using Annoy for neighbor search, n_neighbors = 30</span></span>
+<span><span class="co">#&gt; 03:12:07 Building Annoy index with metric = cosine, n_trees = 50</span></span>
 <span><span class="co">#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</span></span>
 <span><span class="co">#&gt; [----|----|----|----|----|----|----|----|----|----|</span></span>
 <span><span class="co">#&gt; **************************************************|</span></span>
-<span><span class="co">#&gt; 13:45:23 Writing NN index file to temp file /tmp/RtmpDE5jH8/file2fc2bf726fb1a0</span></span>
-<span><span class="co">#&gt; 13:45:23 Searching Annoy index using 1 thread, search_k = 3000</span></span>
-<span><span class="co">#&gt; 13:45:23 Annoy recall = 100%</span></span>
-<span><span class="co">#&gt; 13:45:24 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30</span></span>
-<span><span class="co">#&gt; 13:45:25 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
-<span><span class="co">#&gt; 13:45:25 Commencing optimization for 500 epochs, with 126446 positive edges</span></span>
-<span><span class="co">#&gt; 13:45:25 Using rng type: pcg</span></span>
-<span><span class="co">#&gt; 13:45:29 Optimization finished</span></span>
+<span><span class="co">#&gt; 03:12:07 Writing NN index file to temp file /tmp/RtmpJ9YNHx/file1198d4346c03be</span></span>
+<span><span class="co">#&gt; 03:12:07 Searching Annoy index using 1 thread, search_k = 3000</span></span>
+<span><span class="co">#&gt; 03:12:08 Annoy recall = 100%</span></span>
+<span><span class="co">#&gt; 03:12:09 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30</span></span>
+<span><span class="co">#&gt; 03:12:09 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
+<span><span class="co">#&gt; 03:12:10 Commencing optimization for 500 epochs, with 126446 positive edges</span></span>
+<span><span class="co">#&gt; 03:12:10 Using rng type: pcg</span></span>
+<span><span class="co">#&gt; 03:12:13 Optimization finished</span></span>
 <span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">Seurat</span><span class="fu">::</span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html" class="external-link">DimPlot</a></span><span class="op">(</span><span class="va">pbmc</span>, reduction <span class="op">=</span> <span class="st">"umap"</span>, label <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Clustering result"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">Seurat</span><span class="fu">::</span><span class="fu"><a href="https://satijalab.org/seurat/reference/SeuratTheme.html" class="external-link">NoLegend</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -210,7 +210,7 @@
 <div class="section level2">
 <h2 id="find-degs-using-clusterde">Find DEGs using ClusterDE<a class="anchor" aria-label="anchor" href="#find-degs-using-clusterde"></a>
 </h2>
-<p>We can use <code><a href="../reference/findMarkers.html">findMarkers()</a></code> to perform null-calibrated post-clustering differential expression. The result table is sorted by contrast scores.</p>
+<p>We can use <code><a href="../reference/findMarkers.html">findMarkers()</a></code> to perform null-calibrated post-clustering differential expression. The result table is sorted by record (frequency) contrast scores.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">ClusterDE</span><span class="fu">::</span><span class="fu"><a href="../reference/findMarkers.html">findMarkers</a></span><span class="op">(</span><span class="va">pbmc_sub</span>, ident.1 <span class="op">=</span> <span class="fl">2</span>, ident.2 <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 107 genes have no more than 2 non-zero values; ignore fitting and return all 0s.</span></span>
@@ -360,7 +360,7 @@
 <code class="sourceCode R"><span><span class="va">original_pval</span> <span class="op">&lt;-</span> <span class="va">original_markers</span><span class="op">$</span><span class="va">p_val</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">original_pval</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">original_markers</span><span class="op">)</span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">ClusterDE</span><span class="fu">::</span><span class="fu"><a href="../reference/callDE.html">callDE</a></span><span class="op">(</span><span class="va">original_pval</span>, <span class="va">null_pval</span><span class="op">$</span><span class="va">p</span><span class="op">)</span></span></code></pre></div>
-<p>The result table is the list of DEGs ranked by contrast scores, which is also used as the output of <code><a href="../reference/findMarkers.html">findMarkers()</a></code>.</p>
+<p>The result table is the list of DEGs ranked by record and contrast scores, which is also used as the output of <code><a href="../reference/findMarkers.html">findMarkers()</a></code>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 3</span></span></span>
@@ -394,14 +394,14 @@
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 3</span></span></span>
-<span><span class="co">#&gt;   gene      cs record</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> CDKN1C  27.9  0.75 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> FCGR3A  27.0  0.75 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> CD79B   25.9  0.625</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> RHOC    23.0  0.75 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> CKB     21.3  0.725</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> TCF7L2  18.8  0.825</span></span></code></pre></div>
+<span><span class="co">#&gt;   gene       cs record</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> CD14     16.3  0.925</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> CDKN1C   27.9  0.9  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> FCGR3A   27.0  0.9  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> RHOC     23.0  0.9  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> FAM110A  18.2  0.9  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> GPX1     17.8  0.9</span></span></code></pre></div>
 <p>We can also visualize the genes found by ClusterDE with multiple replicates and PCA approximation.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/FeaturePlot.html" class="external-link">FeaturePlot</a></span><span class="op">(</span><span class="va">pbmc</span><span class="op">[</span>, <span class="va">pbmc</span><span class="op">$</span><span class="va">seurat_clusters</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">8</span><span class="op">)</span><span class="op">]</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">gene</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>

@@ -187,7 +187,7 @@ of 0, which means that we do not detect any DE genes.
 
 ``` r
 message(paste0("Number of DE gene is ", sum(res$record > 0)))
-#> Number of DE gene is 0
+#> Number of DE gene is 6
 ```
 
 ## Session information

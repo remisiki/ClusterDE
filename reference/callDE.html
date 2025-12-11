@@ -52,7 +52,7 @@
 <span>  FDR <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  contrastScore <span class="op">=</span> <span class="st">"diff"</span>,</span>
 <span>  correct <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  threshold <span class="op">=</span> <span class="st">"BC"</span>,</span>
+<span>  threshold <span class="op">=</span> <span class="st">"DS"</span>,</span>
 <span>  ordering <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  nCores <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -87,11 +87,11 @@
 
 
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
-<dd><p>A string value of the threshold method. Must be 'BC' or 'DS'.</p></dd>
+<dd><p>A string value of the threshold method. Must be "BC" or "DS". Default is "DS"</p></dd>
 
 
 <dt id="arg-ordering">ordering<a class="anchor" aria-label="anchor" href="#arg-ordering"></a></dt>
-<dd><p>A logic value. If TRUE, order the genes in the returned table by their significance. Default is TRUE.</p></dd>
+<dd><p>A logic value. If TRUE, order the genes in the returned table by their frequency and significence. Default is TRUE.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -92,21 +92,21 @@ pbmc <- Seurat::RunUMAP(pbmc, dims = 1:10)
 #> Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
 #> To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
 #> This message will be shown once per session
-#> 13:45:22 UMAP embedding parameters a = 0.9922 b = 1.112
-#> 13:45:22 Read 3222 rows and found 10 numeric columns
-#> 13:45:22 Using Annoy for neighbor search, n_neighbors = 30
-#> 13:45:22 Building Annoy index with metric = cosine, n_trees = 50
+#> 03:12:07 UMAP embedding parameters a = 0.9922 b = 1.112
+#> 03:12:07 Read 3222 rows and found 10 numeric columns
+#> 03:12:07 Using Annoy for neighbor search, n_neighbors = 30
+#> 03:12:07 Building Annoy index with metric = cosine, n_trees = 50
 #> 0%   10   20   30   40   50   60   70   80   90   100%
 #> [----|----|----|----|----|----|----|----|----|----|
 #> **************************************************|
-#> 13:45:23 Writing NN index file to temp file /tmp/RtmpDE5jH8/file2fc2bf726fb1a0
-#> 13:45:23 Searching Annoy index using 1 thread, search_k = 3000
-#> 13:45:23 Annoy recall = 100%
-#> 13:45:24 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
-#> 13:45:25 Initializing from normalized Laplacian + noise (using RSpectra)
-#> 13:45:25 Commencing optimization for 500 epochs, with 126446 positive edges
-#> 13:45:25 Using rng type: pcg
-#> 13:45:29 Optimization finished
+#> 03:12:07 Writing NN index file to temp file /tmp/RtmpJ9YNHx/file1198d4346c03be
+#> 03:12:07 Searching Annoy index using 1 thread, search_k = 3000
+#> 03:12:08 Annoy recall = 100%
+#> 03:12:09 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+#> 03:12:09 Initializing from normalized Laplacian + noise (using RSpectra)
+#> 03:12:10 Commencing optimization for 500 epochs, with 126446 positive edges
+#> 03:12:10 Using rng type: pcg
+#> 03:12:13 Optimization finished
 p1 <- Seurat::DimPlot(pbmc, reduction = "umap", label = T) +
   ggplot2::ggtitle("Clustering result") +
   Seurat::NoLegend()
@@ -160,7 +160,8 @@ original_markers <- FindMarkers(
 ## Find DEGs using ClusterDE
 
 We can use `findMarkers()` to perform null-calibrated post-clustering
-differential expression. The result table is sorted by contrast scores.
+differential expression. The result table is sorted by record
+(frequency) contrast scores.
 
 ``` r
 res <- ClusterDE::findMarkers(pbmc_sub, ident.1 = 2, ident.2 = 8)
@@ -348,8 +349,8 @@ names(original_pval) <- rownames(original_markers)
 res <- ClusterDE::callDE(original_pval, null_pval$p)
 ```
 
-The result table is the list of DEGs ranked by contrast scores, which is
-also used as the output of `findMarkers()`.
+The result table is the list of DEGs ranked by record and contrast
+scores, which is also used as the output of `findMarkers()`.
 
 ``` r
 head(res)
@@ -401,14 +402,14 @@ identified as a DEG across null data replicates.
 ``` r
 head(res)
 #> # A tibble: 6 × 3
-#>   gene      cs record
-#>   <chr>  <dbl>  <dbl>
-#> 1 CDKN1C  27.9  0.75 
-#> 2 FCGR3A  27.0  0.75 
-#> 3 CD79B   25.9  0.625
-#> 4 RHOC    23.0  0.75 
-#> 5 CKB     21.3  0.725
-#> 6 TCF7L2  18.8  0.825
+#>   gene       cs record
+#>   <chr>   <dbl>  <dbl>
+#> 1 CD14     16.3  0.925
+#> 2 CDKN1C   27.9  0.9  
+#> 3 FCGR3A   27.0  0.9  
+#> 4 RHOC     23.0  0.9  
+#> 5 FAM110A  18.2  0.9  
+#> 6 GPX1     17.8  0.9
 ```
 
 We can also visualize the genes found by ClusterDE with multiple
