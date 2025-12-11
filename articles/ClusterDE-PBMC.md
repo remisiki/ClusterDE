@@ -92,21 +92,21 @@ pbmc <- Seurat::RunUMAP(pbmc, dims = 1:10)
 #> Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
 #> To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
 #> This message will be shown once per session
-#> 03:12:07 UMAP embedding parameters a = 0.9922 b = 1.112
-#> 03:12:07 Read 3222 rows and found 10 numeric columns
-#> 03:12:07 Using Annoy for neighbor search, n_neighbors = 30
-#> 03:12:07 Building Annoy index with metric = cosine, n_trees = 50
+#> 04:25:00 UMAP embedding parameters a = 0.9922 b = 1.112
+#> 04:25:00 Read 3222 rows and found 10 numeric columns
+#> 04:25:00 Using Annoy for neighbor search, n_neighbors = 30
+#> 04:25:00 Building Annoy index with metric = cosine, n_trees = 50
 #> 0%   10   20   30   40   50   60   70   80   90   100%
 #> [----|----|----|----|----|----|----|----|----|----|
 #> **************************************************|
-#> 03:12:07 Writing NN index file to temp file /tmp/RtmpJ9YNHx/file1198d4346c03be
-#> 03:12:07 Searching Annoy index using 1 thread, search_k = 3000
-#> 03:12:08 Annoy recall = 100%
-#> 03:12:09 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
-#> 03:12:09 Initializing from normalized Laplacian + noise (using RSpectra)
-#> 03:12:10 Commencing optimization for 500 epochs, with 126446 positive edges
-#> 03:12:10 Using rng type: pcg
-#> 03:12:13 Optimization finished
+#> 04:25:00 Writing NN index file to temp file /tmp/RtmpCfNXBV/file1e83816741c70c
+#> 04:25:00 Searching Annoy index using 1 thread, search_k = 3000
+#> 04:25:01 Annoy recall = 100%
+#> 04:25:02 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+#> 04:25:03 Initializing from normalized Laplacian + noise (using RSpectra)
+#> 04:25:03 Commencing optimization for 500 epochs, with 126446 positive edges
+#> 04:25:03 Using rng type: pcg
+#> 04:25:07 Optimization finished
 p1 <- Seurat::DimPlot(pbmc, reduction = "umap", label = T) +
   ggplot2::ggtitle("Clustering result") +
   Seurat::NoLegend()
@@ -148,23 +148,23 @@ pbmc_sub <- subset(x = pbmc, idents = c(2, 8))
 non_zero_genes <- apply(Seurat::GetAssayData(pbmc_sub, layer = "counts"), 1, var) != 0
 pbmc_sub <- pbmc_sub[non_zero_genes,]
 
-original_markers <- FindMarkers(
+original_markers <- Seurat::FindMarkers(
   pbmc_sub,
-  ident.1 = 2,
-  ident.2 = 8,
+  ident.1 = 8,
+  ident.2 = 2,
   min.pct = 0,
   logfc.threshold = 0
 )
+original_markers <- original_markers[original_markers$avg_log2FC > 0,]
 ```
 
 ## Find DEGs using ClusterDE
 
 We can use `findMarkers()` to perform null-calibrated post-clustering
-differential expression. The result table is sorted by record
-(frequency) contrast scores.
+differential expression. The result table is sorted by contrast scores.
 
 ``` r
-res <- ClusterDE::findMarkers(pbmc_sub, ident.1 = 2, ident.2 = 8)
+res <- ClusterDE::findMarkers(pbmc_sub, ident.1 = 8, ident.2 = 2)
 #> 107 genes have no more than 2 non-zero values; ignore fitting and return all 0s.
 #> 64.7% of genes are used in correlation modelling.
 #> 0/1: Modularity Optimizer version 1.3.0 by Ludo Waltman and Nees Jan van Eck
@@ -239,14 +239,14 @@ two clusters are obtained by clustering algorithm, LST1 and RPS19 are
 less likely to be the cell type markers between the two cell types**.
 
 ``` r
-FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = c(rownames(original_markers)[1:6]), ncol = 3)
+Seurat::FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = rownames(original_markers)[1:6], ncol = 3)
 ```
 
 ![](ClusterDE-PBMC_files/figure-html/unnamed-chunk-7-1.png) In contrast,
 the genes from ClusterDE do not have *LST1* and *RPS19* anymore.
 
 ``` r
-FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = c(res$gene[1:6]), ncol = 3)
+Seurat::FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = res$gene[1:6], ncol = 3)
 ```
 
 ![](ClusterDE-PBMC_files/figure-html/unnamed-chunk-8-1.png)
@@ -349,8 +349,8 @@ names(original_pval) <- rownames(original_markers)
 res <- ClusterDE::callDE(original_pval, null_pval$p)
 ```
 
-The result table is the list of DEGs ranked by record and contrast
-scores, which is also used as the output of `findMarkers()`.
+The result table is the list of DEGs ranked by contrast scores, which is
+also used as the output of `findMarkers()`.
 
 ``` r
 head(res)
@@ -380,8 +380,8 @@ datasets are generated faster while still preserving robustness.
 ``` r
 res <- ClusterDE::findMarkers(
   pbmc_sub,
-  ident.1 = 2,
-  ident.2 = 8,
+  ident.1 = 8,
+  ident.2 = 2,
   flavour = "pca",
   nRep = 40,
   nCores = 8
@@ -402,21 +402,21 @@ identified as a DEG across null data replicates.
 ``` r
 head(res)
 #> # A tibble: 6 × 3
-#>   gene       cs record
-#>   <chr>   <dbl>  <dbl>
-#> 1 CD14     16.3  0.925
-#> 2 CDKN1C   27.9  0.9  
-#> 3 FCGR3A   27.0  0.9  
-#> 4 RHOC     23.0  0.9  
-#> 5 FAM110A  18.2  0.9  
-#> 6 GPX1     17.8  0.9
+#>   gene      cs record
+#>   <chr>  <dbl>  <dbl>
+#> 1 CDKN1C  27.9  0.9  
+#> 2 FCGR3A  27.0  0.9  
+#> 3 CD79B   25.9  0.725
+#> 4 RHOC    23.0  0.9  
+#> 5 CKB     21.3  0.85 
+#> 6 TCF7L2  18.8  0.925
 ```
 
 We can also visualize the genes found by ClusterDE with multiple
 replicates and PCA approximation.
 
 ``` r
-FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = c(res$gene[1:6]), ncol = 3)
+Seurat::FeaturePlot(pbmc[, pbmc$seurat_clusters %in% c(2, 8)], features = res$gene[1:6], ncol = 3)
 ```
 
 ![](ClusterDE-PBMC_files/figure-html/unnamed-chunk-16-1.png)

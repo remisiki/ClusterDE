@@ -102,21 +102,21 @@ cellline <- Seurat::RunUMAP(cellline, dims = 1:10)
 #> Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
 #> To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
 #> This message will be shown once per session
-#> 03:05:40 UMAP embedding parameters a = 0.9922 b = 1.112
-#> 03:05:40 Read 758 rows and found 10 numeric columns
-#> 03:05:40 Using Annoy for neighbor search, n_neighbors = 30
-#> 03:05:40 Building Annoy index with metric = cosine, n_trees = 50
+#> 04:17:52 UMAP embedding parameters a = 0.9922 b = 1.112
+#> 04:17:52 Read 758 rows and found 10 numeric columns
+#> 04:17:52 Using Annoy for neighbor search, n_neighbors = 30
+#> 04:17:52 Building Annoy index with metric = cosine, n_trees = 50
 #> 0%   10   20   30   40   50   60   70   80   90   100%
 #> [----|----|----|----|----|----|----|----|----|----|
 #> **************************************************|
-#> 03:05:40 Writing NN index file to temp file /tmp/Rtmp6jih6g/file1049795e489d30
-#> 03:05:40 Searching Annoy index using 1 thread, search_k = 3000
-#> 03:05:40 Annoy recall = 100%
-#> 03:05:41 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
-#> 03:05:41 Initializing from normalized Laplacian + noise (using RSpectra)
-#> 03:05:41 Commencing optimization for 500 epochs, with 27914 positive edges
-#> 03:05:41 Using rng type: pcg
-#> 03:05:43 Optimization finished
+#> 04:17:52 Writing NN index file to temp file /tmp/RtmpP0BJeU/file1e62887769c110
+#> 04:17:52 Searching Annoy index using 1 thread, search_k = 3000
+#> 04:17:52 Annoy recall = 100%
+#> 04:17:53 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+#> 04:17:54 Initializing from normalized Laplacian + noise (using RSpectra)
+#> 04:17:54 Commencing optimization for 500 epochs, with 27914 positive edges
+#> 04:17:54 Using rng type: pcg
+#> 04:17:55 Optimization finished
 Seurat::DimPlot(cellline, reduction = "umap") + ggplot2::ggtitle("Clustering result")
 ```
 
@@ -135,8 +135,9 @@ original_markers <- Seurat::FindMarkers(
   min.pct = 0,
   logfc.threshold = 0
 )
+original_markers <- original_markers[original_markers$avg_log2FC > 0,]
 message(paste0("Number of DE gene is ", sum(original_markers$p_val_adj < 0.05)))
-#> Number of DE gene is 1023
+#> Number of DE gene is 109
 ```
 
 ## Find DEGs using ClusterDE
@@ -204,7 +205,7 @@ of 0, which means that we do not detect any DE genes.
 
 ``` r
 message(paste0("Number of DE gene is ", sum(res$record > 0)))
-#> Number of DE gene is 4
+#> Number of DE gene is 0
 ```
 
 We can also visualize the distribution of contrast scores (diff between

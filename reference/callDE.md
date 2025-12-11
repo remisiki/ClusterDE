@@ -61,7 +61,7 @@ callDE(
   - ordering:
     
     A logic value. If TRUE, order the genes in the returned table by
-    their frequency and significence. Default is TRUE.
+    their significance. Default is TRUE.
 
 ## Value
 

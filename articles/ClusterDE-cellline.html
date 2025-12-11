@@ -159,21 +159,21 @@
 <span><span class="co">#&gt; Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric</span></span>
 <span><span class="co">#&gt; To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'</span></span>
 <span><span class="co">#&gt; This message will be shown once per session</span></span>
-<span><span class="co">#&gt; 03:05:40 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
-<span><span class="co">#&gt; 03:05:40 Read 758 rows and found 10 numeric columns</span></span>
-<span><span class="co">#&gt; 03:05:40 Using Annoy for neighbor search, n_neighbors = 30</span></span>
-<span><span class="co">#&gt; 03:05:40 Building Annoy index with metric = cosine, n_trees = 50</span></span>
+<span><span class="co">#&gt; 04:17:52 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
+<span><span class="co">#&gt; 04:17:52 Read 758 rows and found 10 numeric columns</span></span>
+<span><span class="co">#&gt; 04:17:52 Using Annoy for neighbor search, n_neighbors = 30</span></span>
+<span><span class="co">#&gt; 04:17:52 Building Annoy index with metric = cosine, n_trees = 50</span></span>
 <span><span class="co">#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</span></span>
 <span><span class="co">#&gt; [----|----|----|----|----|----|----|----|----|----|</span></span>
 <span><span class="co">#&gt; **************************************************|</span></span>
-<span><span class="co">#&gt; 03:05:40 Writing NN index file to temp file /tmp/Rtmp6jih6g/file1049795e489d30</span></span>
-<span><span class="co">#&gt; 03:05:40 Searching Annoy index using 1 thread, search_k = 3000</span></span>
-<span><span class="co">#&gt; 03:05:40 Annoy recall = 100%</span></span>
-<span><span class="co">#&gt; 03:05:41 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30</span></span>
-<span><span class="co">#&gt; 03:05:41 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
-<span><span class="co">#&gt; 03:05:41 Commencing optimization for 500 epochs, with 27914 positive edges</span></span>
-<span><span class="co">#&gt; 03:05:41 Using rng type: pcg</span></span>
-<span><span class="co">#&gt; 03:05:43 Optimization finished</span></span>
+<span><span class="co">#&gt; 04:17:52 Writing NN index file to temp file /tmp/RtmpP0BJeU/file1e62887769c110</span></span>
+<span><span class="co">#&gt; 04:17:52 Searching Annoy index using 1 thread, search_k = 3000</span></span>
+<span><span class="co">#&gt; 04:17:52 Annoy recall = 100%</span></span>
+<span><span class="co">#&gt; 04:17:53 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30</span></span>
+<span><span class="co">#&gt; 04:17:54 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
+<span><span class="co">#&gt; 04:17:54 Commencing optimization for 500 epochs, with 27914 positive edges</span></span>
+<span><span class="co">#&gt; 04:17:54 Using rng type: pcg</span></span>
+<span><span class="co">#&gt; 04:17:55 Optimization finished</span></span>
 <span><span class="fu">Seurat</span><span class="fu">::</span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html" class="external-link">DimPlot</a></span><span class="op">(</span><span class="va">cellline</span>, reduction <span class="op">=</span> <span class="st">"umap"</span><span class="op">)</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Clustering result"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ClusterDE-cellline_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" width="700"></p>
 <p>From the UMAP, the two clusters seem to be dubious. Although we do not expect the existence of cell types, when we perform Seurat DE test between the two clusters, and we get &gt; 1000 genes with FDR &lt; 0.05. It means that the double-dipping introduces a huge number of discoveries.</p>
@@ -185,8 +185,9 @@
 <span>  min.pct <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  logfc.threshold <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span>
+<span><span class="va">original_markers</span> <span class="op">&lt;-</span> <span class="va">original_markers</span><span class="op">[</span><span class="va">original_markers</span><span class="op">$</span><span class="va">avg_log2FC</span> <span class="op">&gt;</span> <span class="fl">0</span>,<span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Number of DE gene is "</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">original_markers</span><span class="op">$</span><span class="va">p_val_adj</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Number of DE gene is 1023</span></span></code></pre></div>
+<span><span class="co">#&gt; Number of DE gene is 109</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="find-degs-using-clusterde">Find DEGs using ClusterDE<a class="anchor" aria-label="anchor" href="#find-degs-using-clusterde"></a>
@@ -248,7 +249,7 @@
 <p>We can observe from the results that all genes have a frequency record of 0, which means that we do not detect any DE genes.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Number of DE gene is "</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">record</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Number of DE gene is 4</span></span></code></pre></div>
+<span><span class="co">#&gt; Number of DE gene is 0</span></span></code></pre></div>
 <p>We can also visualize the distribution of contrast scores (diff between the -log p-values from real and null). It is roughly symmetric around 0.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">res</span>, <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">cs</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>

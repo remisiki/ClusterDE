@@ -168,6 +168,7 @@ original_markers <- Seurat::FindMarkers(
   min.cells.feature = 1,
   min.cells.group = 1
 )
+original_markers <- original_markers[original_markers$avg_log2FC > 0,]
 head(original_markers)
 #>                         p_val avg_log2FC pct.1 pct.2     p_val_adj
 #> ENSG00000197971 1.620014e-188   3.071046 1.000 0.995 4.537659e-185
@@ -204,9 +205,9 @@ head(res)
 #> 1 ENSG00000131095  82.1      1
 #> 2 ENSG00000197971  71.5      1
 #> 3 ENSG00000168314  56.3      1
-#> 4 ENSG00000132639  53.9      1
-#> 5 ENSG00000171617  47.9      1
-#> 6 ENSG00000163032  46.2      1
+#> 4 ENSG00000021300  41.0      1
+#> 5 ENSG00000112306  38.5      1
+#> 6 ENSG00000148826  35.8      1
 ```
 
 ## Visualize top marker genes

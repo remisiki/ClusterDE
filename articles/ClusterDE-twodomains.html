@@ -223,6 +223,7 @@
 <span>  min.cells.feature <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  min.cells.group <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
+<span><span class="va">original_markers</span> <span class="op">&lt;-</span> <span class="va">original_markers</span><span class="op">[</span><span class="va">original_markers</span><span class="op">$</span><span class="va">avg_log2FC</span> <span class="op">&gt;</span> <span class="fl">0</span>,<span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">original_markers</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                         p_val avg_log2FC pct.1 pct.2     p_val_adj</span></span>
 <span><span class="co">#&gt; ENSG00000197971 1.620014e-188   3.071046 1.000 0.995 4.537659e-185</span></span>
@@ -256,9 +257,9 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ENSG00000131095  82.1      1</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ENSG00000197971  71.5      1</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ENSG00000168314  56.3      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ENSG00000132639  53.9      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ENSG00000171617  47.9      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> ENSG00000163032  46.2      1</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ENSG00000021300  41.0      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ENSG00000112306  38.5      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> ENSG00000148826  35.8      1</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="visualize-top-marker-genes">Visualize top marker genes<a class="anchor" aria-label="anchor" href="#visualize-top-marker-genes"></a>

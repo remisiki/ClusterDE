@@ -163,8 +163,9 @@ original_markers <- Seurat::FindMarkers(
   min.cells.feature = 1,
   min.cells.group = 1
 )
+original_markers <- original_markers[original_markers$avg_log2FC > 0,]
 message(paste0("Number of DE gene is ", sum(original_markers$p_val_adj < 0.05)))
-#> Number of DE gene is 22
+#> Number of DE gene is 21
 ```
 
 ## Find DEGs using ClusterDE
