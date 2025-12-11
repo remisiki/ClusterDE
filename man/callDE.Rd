@@ -11,7 +11,7 @@ callDE(
   FDR = 0.05,
   contrastScore = "diff",
   correct = FALSE,
-  threshold = "BC",
+  threshold = "DS",
   ordering = TRUE,
   nCores = 1
 )
@@ -29,7 +29,7 @@ callDE(
 
 \item{correct}{A logical value. If TRUE, perform the correction to make the distribution of contrast scores approximately symmetric. Default is FALSE.}
 
-\item{threshold}{A string value of the threshold method. Must be 'BC' or 'DS'.}
+\item{threshold}{A string value of the threshold method. Must be "BC" or "DS". Default is "DS"}
 
 \item{ordering}{A logic value. If TRUE, order the genes in the returned table by their significance. Default is TRUE.}
 }
