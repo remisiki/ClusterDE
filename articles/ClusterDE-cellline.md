@@ -102,21 +102,21 @@ cellline <- Seurat::RunUMAP(cellline, dims = 1:10)
 #> Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
 #> To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
 #> This message will be shown once per session
-#> 05:28:58 UMAP embedding parameters a = 0.9922 b = 1.112
-#> 05:28:58 Read 758 rows and found 10 numeric columns
-#> 05:28:58 Using Annoy for neighbor search, n_neighbors = 30
-#> 05:28:58 Building Annoy index with metric = cosine, n_trees = 50
+#> 05:51:29 UMAP embedding parameters a = 0.9922 b = 1.112
+#> 05:51:29 Read 758 rows and found 10 numeric columns
+#> 05:51:29 Using Annoy for neighbor search, n_neighbors = 30
+#> 05:51:30 Building Annoy index with metric = cosine, n_trees = 50
 #> 0%   10   20   30   40   50   60   70   80   90   100%
 #> [----|----|----|----|----|----|----|----|----|----|
 #> **************************************************|
-#> 05:28:58 Writing NN index file to temp file /tmp/RtmpGp28K8/file1f8c4a33de7527
-#> 05:28:58 Searching Annoy index using 1 thread, search_k = 3000
-#> 05:28:59 Annoy recall = 100%
-#> 05:28:59 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
-#> 05:29:00 Initializing from normalized Laplacian + noise (using RSpectra)
-#> 05:29:00 Commencing optimization for 500 epochs, with 27914 positive edges
-#> 05:29:00 Using rng type: pcg
-#> 05:29:01 Optimization finished
+#> 05:51:30 Writing NN index file to temp file /tmp/RtmpfYqpCA/file1ff495170f469e
+#> 05:51:30 Searching Annoy index using 1 thread, search_k = 3000
+#> 05:51:30 Annoy recall = 100%
+#> 05:51:30 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+#> 05:51:31 Initializing from normalized Laplacian + noise (using RSpectra)
+#> 05:51:31 Commencing optimization for 500 epochs, with 27914 positive edges
+#> 05:51:31 Using rng type: pcg
+#> 05:51:33 Optimization finished
 Seurat::DimPlot(cellline, reduction = "umap") + ggplot2::ggtitle("Clustering result")
 ```
 

@@ -112,7 +112,7 @@ dlpfc_cluster <- BayesSpace::spatialCluster(
   burn.in = 100,
   save.chain = T
 )
-#> Neighbors were identified for 0 out of 673 spots.
+#> Neighbors were identified for 0 out of 513 spots.
 #> Fitting model...
 #> Calculating labels using iterations 100 through 1000.
 ```
@@ -164,7 +164,7 @@ original_markers <- Seurat::FindMarkers(
 )
 original_markers <- original_markers[original_markers$avg_log2FC > 0,]
 message(paste0("Number of DE gene is ", sum(original_markers$p_val_adj < 0.05)))
-#> Number of DE gene is 21
+#> Number of DE gene is 136
 ```
 
 ## Find DEGs using ClusterDE
@@ -176,7 +176,7 @@ example, coordinates are stored in `row` and `col`.
 ``` r
 res <- ClusterDE::findMarkers(dlpfc_onedomain, ident.1 = 1, ident.2 = 2, spatial = c("row", "col"))
 #> 100% of genes are used in correlation modelling.
-#> 0/1: Neighbors were identified for 0 out of 673 spots.
+#> 0/1: Neighbors were identified for 0 out of 513 spots.
 #> 0/1: Fitting model...
 #> 0/1: Calculating labels using iterations 100 through 1000.
 #> 0/1: Normalizing layer: counts
@@ -188,7 +188,7 @@ expression.
 
 ``` r
 message(paste0("Number of DE gene is ", sum(res$record > 0)))
-#> Number of DE gene is 6
+#> Number of DE gene is 1
 ```
 
 ## Session information

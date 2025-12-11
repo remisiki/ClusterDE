@@ -176,7 +176,7 @@
 <span>  burn.in <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  save.chain <span class="op">=</span> <span class="cn">T</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Neighbors were identified for 0 out of 673 spots.</span></span>
+<span><span class="co">#&gt; Neighbors were identified for 0 out of 513 spots.</span></span>
 <span><span class="co">#&gt; Fitting model...</span></span>
 <span><span class="co">#&gt; Calculating labels using iterations 100 through 1000.</span></span></code></pre></div>
 <p>Visualize the spatial clustering results based on the real data.</p>
@@ -220,7 +220,7 @@
 <span><span class="op">)</span></span>
 <span><span class="va">original_markers</span> <span class="op">&lt;-</span> <span class="va">original_markers</span><span class="op">[</span><span class="va">original_markers</span><span class="op">$</span><span class="va">avg_log2FC</span> <span class="op">&gt;</span> <span class="fl">0</span>,<span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Number of DE gene is "</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">original_markers</span><span class="op">$</span><span class="va">p_val_adj</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Number of DE gene is 21</span></span></code></pre></div>
+<span><span class="co">#&gt; Number of DE gene is 136</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="find-degs-using-clusterde">Find DEGs using ClusterDE<a class="anchor" aria-label="anchor" href="#find-degs-using-clusterde"></a>
@@ -229,14 +229,14 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">ClusterDE</span><span class="fu">::</span><span class="fu"><a href="../reference/findMarkers.html">findMarkers</a></span><span class="op">(</span><span class="va">dlpfc_onedomain</span>, ident.1 <span class="op">=</span> <span class="fl">1</span>, ident.2 <span class="op">=</span> <span class="fl">2</span>, spatial <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"row"</span>, <span class="st">"col"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 100% of genes are used in correlation modelling.</span></span>
-<span><span class="co">#&gt; 0/1: Neighbors were identified for 0 out of 673 spots.</span></span>
+<span><span class="co">#&gt; 0/1: Neighbors were identified for 0 out of 513 spots.</span></span>
 <span><span class="co">#&gt; 0/1: Fitting model...</span></span>
 <span><span class="co">#&gt; 0/1: Calculating labels using iterations 100 through 1000.</span></span>
 <span><span class="co">#&gt; 0/1: Normalizing layer: counts</span></span></code></pre></div>
 <p>We can observe from the results that the cell compositions are nearly identical, leaving only one gene with detectable differential expression.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Number of DE gene is "</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">record</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Number of DE gene is 6</span></span></code></pre></div>
+<span><span class="co">#&gt; Number of DE gene is 1</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
