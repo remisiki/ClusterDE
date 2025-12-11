@@ -215,8 +215,8 @@
 <span><span class="fu">Seurat</span><span class="fu">::</span><span class="fu"><a href="https://satijalab.github.io/seurat-object/reference/Idents.html" class="external-link">Idents</a></span><span class="op">(</span><span class="va">dlpfc_twodomain</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"spatial.cluster"</span></span>
 <span><span class="va">original_markers</span> <span class="op">&lt;-</span> <span class="fu">Seurat</span><span class="fu">::</span><span class="fu"><a href="https://satijalab.org/seurat/reference/FindMarkers.html" class="external-link">FindMarkers</a></span><span class="op">(</span></span>
 <span>  object <span class="op">=</span> <span class="va">dlpfc_twodomain</span>,</span>
-<span>  ident.1 <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  ident.2 <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  ident.1 <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  ident.2 <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  test.use <span class="op">=</span> <span class="st">"wilcox"</span>,</span>
 <span>  logfc.threshold <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  min.pct <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -226,19 +226,19 @@
 <span><span class="va">original_markers</span> <span class="op">&lt;-</span> <span class="va">original_markers</span><span class="op">[</span><span class="va">original_markers</span><span class="op">$</span><span class="va">avg_log2FC</span> <span class="op">&gt;</span> <span class="fl">0</span>,<span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">original_markers</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                         p_val avg_log2FC pct.1 pct.2     p_val_adj</span></span>
-<span><span class="co">#&gt; ENSG00000197971 1.620014e-188   3.071046 1.000 0.995 4.537659e-185</span></span>
-<span><span class="co">#&gt; ENSG00000123560 8.266927e-180   3.262644 1.000 0.967 2.315566e-176</span></span>
-<span><span class="co">#&gt; ENSG00000131095 1.904118e-172   2.949736 0.998 0.850 5.333433e-169</span></span>
-<span><span class="co">#&gt; ENSG00000109846 1.878857e-167   3.166675 0.995 0.790 5.262680e-164</span></span>
-<span><span class="co">#&gt; ENSG00000173786 2.472031e-165   3.081083 0.995 0.725 6.924158e-162</span></span>
-<span><span class="co">#&gt; ENSG00000168314 5.661648e-150   3.056843 0.971 0.504 1.585827e-146</span></span></code></pre></div>
+<span><span class="co">#&gt; ENSG00000198804 6.479948e-127  0.9043609 1.000 1.000 1.815033e-123</span></span>
+<span><span class="co">#&gt; ENSG00000132639 1.894004e-122  1.6959888 0.991 0.926 5.305106e-119</span></span>
+<span><span class="co">#&gt; ENSG00000198938 1.063328e-108  0.7275062 1.000 1.000 2.978381e-105</span></span>
+<span><span class="co">#&gt; ENSG00000154146  3.835596e-99  1.4389400 0.978 0.926  1.074350e-95</span></span>
+<span><span class="co">#&gt; ENSG00000163032  6.974259e-99  1.6499892 0.966 0.821  1.953490e-95</span></span>
+<span><span class="co">#&gt; ENSG00000187094  6.429586e-96  1.7939567 0.949 0.779  1.800927e-92</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="find-degs-using-clusterde">Find DEGs using ClusterDE<a class="anchor" aria-label="anchor" href="#find-degs-using-clusterde"></a>
 </h2>
 <p>We can use <code><a href="../reference/findMarkers.html">findMarkers()</a></code> from ClusterDE with <code>spatial</code> specified as name of X and Y coordinates in the data meta columns. Here in the example, coordinates are stored in <code>row</code> and <code>col</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">ClusterDE</span><span class="fu">::</span><span class="fu"><a href="../reference/findMarkers.html">findMarkers</a></span><span class="op">(</span><span class="va">dlpfc_twodomain</span>, ident.1 <span class="op">=</span> <span class="fl">1</span>, ident.2 <span class="op">=</span> <span class="fl">2</span>, spatial <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"row"</span>, <span class="st">"col"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">ClusterDE</span><span class="fu">::</span><span class="fu"><a href="../reference/findMarkers.html">findMarkers</a></span><span class="op">(</span><span class="va">dlpfc_twodomain</span>, ident.1 <span class="op">=</span> <span class="fl">2</span>, ident.2 <span class="op">=</span> <span class="fl">1</span>, spatial <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"row"</span>, <span class="st">"col"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 100% of genes are used in correlation modelling.</span></span>
 <span><span class="co">#&gt; 0/1: Neighbors were identified for 0 out of 1205 spots.</span></span>
 <span><span class="co">#&gt; 0/1: Fitting model...</span></span>
@@ -254,12 +254,12 @@
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 3</span></span></span>
 <span><span class="co">#&gt;   gene               cs record</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ENSG00000131095  82.1      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ENSG00000197971  71.5      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ENSG00000168314  56.3      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ENSG00000021300  41.0      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ENSG00000112306  38.5      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> ENSG00000148826  35.8      1</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ENSG00000132639  53.9      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ENSG00000171617  47.9      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ENSG00000163032  46.2      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ENSG00000198804  41.2      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ENSG00000139970  38.1      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> ENSG00000128656  37.2      1</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="visualize-top-marker-genes">Visualize top marker genes<a class="anchor" aria-label="anchor" href="#visualize-top-marker-genes"></a>

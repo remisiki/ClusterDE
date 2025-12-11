@@ -160,8 +160,8 @@ dlpfc_twodomain <- Seurat::as.Seurat(dlpfc_cluster)
 Seurat::Idents(dlpfc_twodomain) <- "spatial.cluster"
 original_markers <- Seurat::FindMarkers(
   object = dlpfc_twodomain,
-  ident.1 = 1,
-  ident.2 = 2,
+  ident.1 = 2,
+  ident.2 = 1,
   test.use = "wilcox",
   logfc.threshold = 0,
   min.pct = 0,
@@ -171,12 +171,12 @@ original_markers <- Seurat::FindMarkers(
 original_markers <- original_markers[original_markers$avg_log2FC > 0,]
 head(original_markers)
 #>                         p_val avg_log2FC pct.1 pct.2     p_val_adj
-#> ENSG00000197971 1.620014e-188   3.071046 1.000 0.995 4.537659e-185
-#> ENSG00000123560 8.266927e-180   3.262644 1.000 0.967 2.315566e-176
-#> ENSG00000131095 1.904118e-172   2.949736 0.998 0.850 5.333433e-169
-#> ENSG00000109846 1.878857e-167   3.166675 0.995 0.790 5.262680e-164
-#> ENSG00000173786 2.472031e-165   3.081083 0.995 0.725 6.924158e-162
-#> ENSG00000168314 5.661648e-150   3.056843 0.971 0.504 1.585827e-146
+#> ENSG00000198804 6.479948e-127  0.9043609 1.000 1.000 1.815033e-123
+#> ENSG00000132639 1.894004e-122  1.6959888 0.991 0.926 5.305106e-119
+#> ENSG00000198938 1.063328e-108  0.7275062 1.000 1.000 2.978381e-105
+#> ENSG00000154146  3.835596e-99  1.4389400 0.978 0.926  1.074350e-95
+#> ENSG00000163032  6.974259e-99  1.6499892 0.966 0.821  1.953490e-95
+#> ENSG00000187094  6.429586e-96  1.7939567 0.949 0.779  1.800927e-92
 ```
 
 ## Find DEGs using ClusterDE
@@ -186,7 +186,7 @@ name of X and Y coordinates in the data meta columns. Here in the
 example, coordinates are stored in `row` and `col`.
 
 ``` r
-res <- ClusterDE::findMarkers(dlpfc_twodomain, ident.1 = 1, ident.2 = 2, spatial = c("row", "col"))
+res <- ClusterDE::findMarkers(dlpfc_twodomain, ident.1 = 2, ident.2 = 1, spatial = c("row", "col"))
 #> 100% of genes are used in correlation modelling.
 #> 0/1: Neighbors were identified for 0 out of 1205 spots.
 #> 0/1: Fitting model...
@@ -202,12 +202,12 @@ head(res)
 #> # A tibble: 6 × 3
 #>   gene               cs record
 #>   <chr>           <dbl>  <dbl>
-#> 1 ENSG00000131095  82.1      1
-#> 2 ENSG00000197971  71.5      1
-#> 3 ENSG00000168314  56.3      1
-#> 4 ENSG00000021300  41.0      1
-#> 5 ENSG00000112306  38.5      1
-#> 6 ENSG00000148826  35.8      1
+#> 1 ENSG00000132639  53.9      1
+#> 2 ENSG00000171617  47.9      1
+#> 3 ENSG00000163032  46.2      1
+#> 4 ENSG00000198804  41.2      1
+#> 5 ENSG00000139970  38.1      1
+#> 6 ENSG00000128656  37.2      1
 ```
 
 ## Visualize top marker genes

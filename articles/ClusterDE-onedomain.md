@@ -2,17 +2,17 @@
 
 ## Download data
 
-We selected layer 5 of 151673 slice from the LIBD Human Dorsolateral
-Prefrontal Cortex (DLPFC) dataset, which is downloaded in the
-spatialLIBD R package.
+We selected white matter (WM) of 151673 slice from the LIBD Human
+Dorsolateral Prefrontal Cortex (DLPFC) dataset, which is downloaded in
+the spatialLIBD R package.
 
 ``` r
 # # Download the spot-level data
 # spe <- spatialLIBD::fetch_data(type = "spe")
 #
-# # Select the Layer5 in the slice 151673
+# # Select the white matter layer in the slice 151673
 # sub_151673 <- spe[, spe$sample_id == "151673"]
-# index <- sub_151673$spatialLIBD == "L5"
+# index <- sub_151673$spatialLIBD == "WM"
 # index[which(is.na(index))] <- "NAN"
 # sub_151673 <- sub_151673[, index == "TRUE"]
 # print(sub_151673)
@@ -40,8 +40,7 @@ spatialLIBD R package.
 data(dlpfc_onedomain, package = "ClusterDE")
 ```
 
-Visualize the real data. Since the data contains only one domain, there
-should not have between domains marker genes.
+Visualize the real data on spatial mapping.
 
 ``` r
 # Visualize the real spatial domains
@@ -55,7 +54,7 @@ domains <- data.frame(Xaxis = dlpfc_onedomain$spatial1, Yaxis = dlpfc_onedomain$
 #>     intersect, t
 ggplot2::ggplot(domains, ggplot2::aes(x = Xaxis, y = Yaxis, col = Domain)) +
   ggplot2::geom_point(size = 1.0) +
-  ggplot2::ggtitle("Manual annotation \n (The layer5 in the slice 151673)") +
+  ggplot2::ggtitle("Manual annotation \n (WM in the slice 151673)") +
   ggplot2::coord_equal() +
   ggplot2::theme(
     plot.title = ggplot2::element_text(size = 10, hjust = 0.5),
@@ -183,8 +182,9 @@ res <- ClusterDE::findMarkers(dlpfc_onedomain, ident.1 = 1, ident.2 = 2, spatial
 #> 0/1: Normalizing layer: counts
 ```
 
-We can observe from the results that all genes have a frequency record
-of 0, which means that we do not detect any DE genes.
+We can observe from the results that the cell compositions are nearly
+identical, leaving only one gene with detectable differential
+expression.
 
 ``` r
 message(paste0("Number of DE gene is ", sum(res$record > 0)))
